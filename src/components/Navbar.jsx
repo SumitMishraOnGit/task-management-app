@@ -1,6 +1,6 @@
 function Navbar() {
   return (
-   <nav className="bg-neutral-900/60 backdrop-blur-lg border border-white/20 rounded-b-lg sticky top-0 z-50 shadow-md flex justify-between items-baseline w-full">
+   <nav className="bg-neutral-900/60 backdrop-blur-lg border border-white/20 rounded-b-lg fixed top-0 left-0 z-50 shadow-md flex justify-between w-full">
       <span className="py-2 pl-4 text-white" style={{ fontFamily: '"Jersey 15", cursive', fontSize: "35px" }}>
         AlTogether
       </span>
