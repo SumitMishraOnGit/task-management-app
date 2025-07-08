@@ -22,16 +22,16 @@ html, body {
 }
 
 :root {
-  --color-bg1: rgb(18, 12, 18);         // almost black with a hint of rose
-  --color-bg2: rgb(38, 18, 30);         // deeper plum-black blend
+  --color-bg1: rgb(28, 18, 28);         /* slightly brighter than near-black */
+  --color-bg2: rgb(48, 28, 40);         /* lifted plum tone */
 
-  --color1: 110, 30, 60;                // dark muted rose
-  --color2: 90, 25, 50;                 // deep wine/purple-pink
-  --color3: 80, 30, 50;                 // soft dusk rose
-  --color4: 140, 50, 100;               // darker hot pink pop (reduced brightness)
-  --color5: 60, 30, 40;                 // ash rose / dusty plum
+  --color1: 130, 50, 80;                /* lifted muted rose */
+  --color2: 110, 45, 70;                /* deeper wine/pink */
+  --color3: 100, 50, 70;                /* dusk rose with warmth */
+  --color4: 160, 70, 120;               /* a touch more vibrant pink pop */
+  --color5: 80, 50, 60;                 /* dusty plum with a boost */
 
-  --color-interactive: 120, 40, 70;     // gentle shimmer trail
+  --color-interactive: 140, 60, 90;     /* soft glow trail */
   --circle-size: 80%;
   --blending: soft-light;
 }

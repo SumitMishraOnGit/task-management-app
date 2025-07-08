@@ -1,4 +1,4 @@
-function Navbar() {
+function HeroNavbar() {
   return (
    <nav className="bg-neutral-900/60 backdrop-blur-lg border border-white/20 rounded-b-lg fixed top-0 left-0 z-50 shadow-md flex justify-between w-full">
       <span className="py-2 pl-4 text-white" style={{ fontFamily: '"Jersey 15", cursive', fontSize: "35px" }}>
@@ -16,4 +16,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default HeroNavbar;

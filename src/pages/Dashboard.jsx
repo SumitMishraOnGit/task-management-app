@@ -1,9 +1,6 @@
-import Layout from "../components/Layout";
-
 export default function Dashboard() {
   return (
-    <Layout>
-      <div className="bg-neutral-900/70 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
+      <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
         {/* top 2 boxes in a row */}
         <div className="flex w-full gap-4 h-2/3">
           <div className="dashboard-card w-1/5">
@@ -32,6 +29,5 @@ export default function Dashboard() {
         {/* bottom div */}
         <div className="dashboard-card w-full h-1/2"></div>
       </div>
-    </Layout>
   );
 }
