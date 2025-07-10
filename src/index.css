@@ -26,8 +26,18 @@
     @apply mt-16 pl-2 space-y-2 transition ;
   }
 
+
   .sidebar-item {
     @apply list-none text-lg py-2 px-5 cursor-pointer font-normal transition duration-200 hover:bg-rose-950/30 hover:text-rose-100 hover:rounded-md flex items-center gap-3;
+  }
+
+  .sidebar-item.active {
+    /* Active state: no hover effect, keep highlight */
+    @apply pointer-events-none bg-neutral-900 text-rose-400 rounded-md;
+  }
+  .sidebar-item.active:hover {
+    /* Prevent hover effect on active */
+    @apply bg-neutral-900 text-rose-400;
   }
 
   .sidebar-icon {

@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout"; 
 import HeroNavbar from "./components/HeroNavbar";
-import HeroSection from "./components/HeroSection";
+import HeroSection from "./components/HeroSection";   
 import Dashboard from "./pages/dashboard";
-import Tasks from "./pages/tasks";
+import Tasks from "./pages/Tasks";
 import Profile from "./pages/profile";
 import Logout from "./pages/logout";
 
