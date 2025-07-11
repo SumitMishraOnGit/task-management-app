@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout"; 
-import HeroNavbar from "./components/HeroNavbar";
-import HeroSection from "./components/HeroSection";   
-import Dashboard from "./pages/dashboard";
-import Tasks from "./pages/Tasks";
-import Profile from "./pages/profile";
-import Logout from "./pages/logout";
+import Layout from "./components/Layout.jsx";
+import HeroNavbar from "./components/HeroNavbar.jsx";
+import HeroSection from "./components/HeroSection.jsx";
+import Dashboard from "./pages/dashboard.jsx";
+import HomePage from "./pages/HomePage.jsx"; // Import the HomePage component
+import Profile from "./pages/profile.jsx";
+import Logout from "./pages/logout.jsx";
 
 function App() {
   return (
@@ -25,7 +25,8 @@ function App() {
         {/* All other routes that use the dashboard layout */}
         <Route path="/home" element={<Layout />}>
           <Route path="/home/dashboard" element={<Dashboard />} />
-          <Route path="/home/tasks" element={<Tasks />} />
+          {/* Use the HomePage component for the /home/tasks route */}
+          <Route path="/home/tasks" element={<HomePage />} />
           <Route path="/home/profile" element={<Profile />} />
           <Route path="/home/logout" element={<Logout />} />
         </Route>
@@ -34,4 +35,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
