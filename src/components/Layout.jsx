@@ -9,11 +9,9 @@ export default function Layout({ children }) {
     <>
       <BlobbyBackground />
       <DashboardNavbar />
-      <div className="flex">
-        <Sidebar />
-        <div className="main-content">
-          <Outlet />
-        </div>
+      <Sidebar />
+      <div className="main-content ml-[280px] mt-16 h-[calc(100vh-4rem)] overflow-auto">
+        <Outlet />
       </div>
     </>
   );

@@ -15,7 +15,7 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails }) => {
       className={`group grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out relative
         ${task.status === 'completed'
           ? 'bg-rose-700/30 border border-rose-600 scale-98 opacity-70'
-          : 'bg-neutral-700 border border-neutral-600 hover:bg-neutral-600 scale-100 opacity-100'
+          : 'bg-neutral-800 border border-neutral-700/50 hover:bg-neutral-700 scale-100 opacity-100'
         }`}
     >
       {/* Edit Button on Task Card - Hidden by default, visible on group hover */}

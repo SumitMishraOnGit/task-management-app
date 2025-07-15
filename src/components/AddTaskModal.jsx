@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { enhanceDescriptionWithGemini } from '../utils/geminiApi';
 
 const AddTaskModal = ({ onClose, onAddTask }) => {
   const [newTask, setNewTask] = useState({
@@ -7,29 +6,12 @@ const AddTaskModal = ({ onClose, onAddTask }) => {
     description: '',
     dueDate: '',
   });
-  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTask(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleEnhanceDescription = async () => {
-    if (!newTask.title.trim()) {
-      alert("Please enter a Task Title before enhancing the description.");
-      return;
-    }
-
-    setIsGeneratingDescription(true);
-    try {
-      const generatedText = await enhanceDescriptionWithGemini(newTask.title, newTask.description);
-      setNewTask(prev => ({ ...prev, description: generatedText }));
-    } catch (error) {
-      alert(error.message); // Display error from utility function
-    } finally {
-      setIsGeneratingDescription(false);
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();

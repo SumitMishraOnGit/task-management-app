@@ -2,7 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar arrows globally in supported browsers */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
 @layer components {
+  /* Custom scrollbar for main content and sidebar */
+  .main-content::-webkit-scrollbar,
+  .sidebar-container::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  .main-content::-webkit-scrollbar-button,
+  .sidebar-container::-webkit-scrollbar-button {
+    display: none;
+  }
+  .main-content::-webkit-scrollbar-thumb,
+  .sidebar-container::-webkit-scrollbar-thumb {
+    background: #fb7185; /* rose-400 */
+    border-radius: 8px;
+  }
+  .main-content::-webkit-scrollbar-thumb:hover,
+  .sidebar-container::-webkit-scrollbar-thumb:hover {
+    background: #f43f5e; /* rose-500 for hover */
+  }
+  .main-content {
+    scrollbar-color: #fb7185 transparent;
+    scrollbar-width: thin;
+  }
+  .sidebar-container {
+    scrollbar-color: #fb7185 transparent;
+    scrollbar-width: thin;
+  }
   /* Layout components */
   .navbar-container {
     @apply fixed top-0 left-0 w-full h-16  bg-neutral-900/50 backdrop-blur-lg border-b border-white/20 z-50 shadow-md flex items-center px-6;
@@ -23,7 +55,7 @@
   }
 
   .sidebar-menu {
-    @apply mt-16 pl-2 space-y-2 transition ;
+    @apply pl-2 space-y-2 transition ;
   }
 
 

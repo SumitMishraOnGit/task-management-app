@@ -1,14 +1,14 @@
 import { NavLink } from "react-router-dom";
 export default function Sidebar() {
   return (
-    <div className="h-[calc(full - 4rem)] w-280px flex shrink-0">
-      <div className="sidebar-container">
-        <ul className="sidebar-menu">
+    <div className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-[280px] flex shrink-0 z-40">
+      <div className="sidebar-container bg-neutral-900/50 backdrop-blur-lg  shadow-lg w-full">
+        <ul className="sidebar-menu ">
 
           <NavLink
             to="/home/dashboard"
             className={({ isActive }) =>
-              `sidebar-item${isActive ? ' active bg-neutral-900 text-rose-400' : ''}`
+              `sidebar-item ${isActive ? ' active bg-neutral-900 text-rose-400' : ''}`
             }
           >
             <li className="flex items-center gap-2">

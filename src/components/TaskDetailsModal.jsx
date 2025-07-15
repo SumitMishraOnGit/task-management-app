@@ -25,7 +25,7 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-neutral-900/50 flex items-center justify-center z-[100]" style={{ backdropFilter: 'blur(8px)' }}>
+    <div className="fixed inset-0 bg-neutral-900/50 flex items-center justify-center z-[100]" style={{ backdropFilter: 'blur(4px)' }}>
       <div className="bg-neutral-800 rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-md relative">
         <button
           onClick={() => { onClose(); setIsEditingTask(false); }}

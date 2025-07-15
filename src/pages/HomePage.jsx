@@ -79,13 +79,15 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-900/50 text-neutral-100 font-sans flex items-start justify-center relative" style={{ backdropFilter: 'blur(8px)' }}>
-      <div className="w-full max-w-4xl bg-neutral-800 rounded-xl shadow-lg p-6 md:p-8">
-        <TaskList
-          sortedTasks={sortedTasks}
-          toggleTaskStatus={toggleTaskStatus}
-          openTaskDetails={openTaskDetails}
-        />
+    <div className="min-h-screen bg-neutral-900/50 text-neutral-100 font-sans flex items-stretch justify-center relative" style={{ backdropFilter: 'blur(8px)' }}>
+      <div className="w-screen dashboard-card rounded-xl shadow-lg p-6 md:p-8 flex flex-col min-h-screen m-4">
+        <div className="flex-1 overflow-auto">
+          <TaskList
+            sortedTasks={sortedTasks}
+            toggleTaskStatus={toggleTaskStatus}
+            openTaskDetails={openTaskDetails}
+          />
+        </div>
       </div>
 
       <FloatingActionButton onClick={() => setIsAddTaskPopupOpen(true)} />
