@@ -81,7 +81,7 @@
   }
 
   .dashboard-card {
-    @apply bg-neutral-900 p-4 border-t border-neutral-700 rounded-xl h-full overflow-auto shadow-md;
+    @apply p-4 bg-neutral-900/70 border-t border-neutral-700/50 rounded-xl h-full overflow-auto shadow-md;
   }
   .task-div {
     @apply bg-neutral-900 px-4 py-2 border-t border-neutral-700 rounded-xl h-full overflow-auto shadow-md;
