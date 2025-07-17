@@ -1,4 +1,4 @@
-import "../gradient-bg.scss";
+import "../../gradient-bg.scss";
 const BlobbyBackground = () => {
   return (
     <>

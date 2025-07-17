@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTasks } from '../hooks/useTasks';
 import TaskList from '../components/Tasks/TaskList';
-import TaskDetailsModal from '../components/TaskDetailsModal';
+import TaskDetailsModal from '../components/modals/TaskDetailsModal';
 
 export default function HomePage() {
   // Dummy task data as initial state for the hook

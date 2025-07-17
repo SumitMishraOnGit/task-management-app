@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { enhanceDescriptionWithGemini } from '../utils/geminiApi';
+import { enhanceDescriptionWithGemini } from '../../utils/geminiApi';
 
 const AddTaskModal = ({ onClose, onAddTask }) => {
   const [newTask, setNewTask] = useState({

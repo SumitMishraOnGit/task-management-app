@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DeleteConfirmationModal from '../DeleteConfirmationModal';
+import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 
 const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);

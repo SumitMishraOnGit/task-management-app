@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout.jsx";
-import HeroNavbar from "./components/HeroNavbar.jsx";
+import Layout from "./components/layout/Layout.jsx";
+import HeroNavbar from "./components/layout/Navbar/HeroNavbar.jsx";
 import HeroSection from "./components/HeroSection.jsx";
 import Dashboard from "./pages/dashboard.jsx";
 import HomePage from "./pages/HomePage.jsx"; // Import the HomePage component

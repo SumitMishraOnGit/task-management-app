@@ -1,11 +1,11 @@
-import BlobbyBackground from "./BlobbyBackground";
-import DashboardNavbar from "./DashNavbar";
+import BlobbyBackground from "../ui/BlobbyBackground";
+import DashboardNavbar from "./Navbar/DashNavbar";
 import Sidebar from "./Sidebar";
-import FloatingActionButton from "./FloatingActionButton";
+import FloatingActionButton from "../ui/FloatingActionButton";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import AddTaskModal from "./AddTaskModal";
-import { useTasks } from "../hooks/useTasks";
+import AddTaskModal from "../modals/AddTaskModal";
+import { useTasks } from "../../hooks/useTasks";
 
 
 export default function Layout({ children }) {
