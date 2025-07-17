@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-export const useTasks = (initialTasks) => {
-  const [tasks, setTasks] = useState(initialTasks);
+export const useTasks = (initialTasks = []) => {
+  const [tasks, setTasks] = useState(initialTasks || []);
   const [sortedTasks, setSortedTasks] = useState([]);
 
   useEffect(() => {

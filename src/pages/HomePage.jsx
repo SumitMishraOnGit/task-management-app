@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useTasks } from '../hooks/useTasks';
 import TaskList from '../components/Tasks/TaskList';
-import AddTaskModal from '../components/AddTaskModal';
 import TaskDetailsModal from '../components/TaskDetailsModal';
-import FloatingActionButton from '../components/FloatingActionButton';
 
 export default function HomePage() {
   // Dummy task data as initial state for the hook
@@ -90,15 +88,6 @@ export default function HomePage() {
           />
         </div>
       </div>
-
-      <FloatingActionButton onClick={() => setIsAddTaskPopupOpen(true)} />
-
-      {isAddTaskPopupOpen && (
-        <AddTaskModal
-          onClose={() => setIsAddTaskPopupOpen(false)}
-          onAddTask={addTask}
-        />
-      )}
 
       {isTaskDetailsPopupOpen && selectedTask && (
         <TaskDetailsModal
