@@ -1,7 +1,7 @@
 import React from 'react';
 import TaskItem from './TaskItem';
 
-const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails }) => {
+const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Task List Header */}
@@ -29,6 +29,7 @@ const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails }) => {
                   task={{ ...task, displayIndex: index + 1 }} // Pass index for S.No. display
                   toggleTaskStatus={toggleTaskStatus}
                   openTaskDetails={openTaskDetails}
+                  deleteTask={deleteTask}
                 />
               </React.Fragment>
             ))}

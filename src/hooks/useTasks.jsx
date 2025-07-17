@@ -53,11 +53,16 @@ export const useTasks = (initialTasks) => {
     );
   };
 
+  const deleteTask = (id) => {
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+  };
+
   return {
     tasks,
     sortedTasks,
     addTask,
     toggleTaskStatus,
     updateTask,
+    deleteTask,
   };
 };

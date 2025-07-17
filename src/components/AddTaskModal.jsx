@@ -1,15 +1,36 @@
 import React, { useState } from 'react';
 
+import { enhanceDescriptionWithGemini } from '../utils/geminiApi';
+
 const AddTaskModal = ({ onClose, onAddTask }) => {
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
     dueDate: '',
   });
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTask(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEnhanceDescription = async () => {
+    if (!newTask.title.trim()) {
+      alert('Please enter a task title first!');
+      return;
+    }
+
+    setIsGeneratingDescription(true);
+    try {
+      const enhancedDescription = await enhanceDescriptionWithGemini(newTask.title, newTask.description);
+      setNewTask(prev => ({ ...prev, description: enhancedDescription }));
+    } catch (error) {
+      console.error('Error enhancing description:', error);
+      alert('Failed to enhance description. Please try again.');
+    } finally {
+      setIsGeneratingDescription(false);
+    }
   };
 
 

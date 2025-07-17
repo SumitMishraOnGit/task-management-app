@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTasks } from '../hooks/useTasks';
 import TaskList from '../components/Tasks/TaskList';
 import AddTaskModal from '../components/AddTaskModal';
@@ -62,7 +62,7 @@ export default function HomePage() {
     },
   ];
 
-  const { sortedTasks, addTask, toggleTaskStatus, updateTask } = useTasks(initialTasks);
+  const { sortedTasks, addTask, toggleTaskStatus, updateTask, deleteTask } = useTasks(initialTasks);
 
   const [isAddTaskPopupOpen, setIsAddTaskPopupOpen] = useState(false);
   const [isTaskDetailsPopupOpen, setIsTaskDetailsPopupOpen] = useState(false);
@@ -86,6 +86,7 @@ export default function HomePage() {
             sortedTasks={sortedTasks}
             toggleTaskStatus={toggleTaskStatus}
             openTaskDetails={openTaskDetails}
+            deleteTask={deleteTask}
           />
         </div>
       </div>
