@@ -1,6 +1,9 @@
-import TaskDistributionChart from '../components/ChartLogic'; // Import the chart component
+import TaskDistributionChart from '../components/ChartLogic';
+import RecentTasksPreview from '../components/Tasks/RecentTasksPreview';
+import { useTasks } from '../hooks/useTasks';
 
 export default function Dashboard() {
+  const { tasks } = useTasks();
   return (
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
       {/* top 2 boxes in a row */}
@@ -46,12 +49,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      {/* bottom div, recent tasks to be shown */}
-      <div className="dashboard-card w-full h-2/3 p-4 flex-grow"> {/* Added flex-grow here for better height distribution */}
-        <h3 className="text-lg font-semibold text-neutral-200 mb-4">Recent Tasks</h3>
-        {/* Content for recent tasks goes here */}
-        <p className="text-neutral-400">List of recent tasks will appear here.</p>
-      </div>
+      {/* Recent tasks section */}
+      <RecentTasksPreview tasks={tasks || []}/>
     </div>
   );
 }
