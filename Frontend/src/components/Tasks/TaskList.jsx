@@ -1,3 +1,4 @@
+
 import React from 'react';
 import TaskItem from './TaskItem';
 
@@ -17,16 +18,16 @@ const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask }
         {sortedTasks.length > 0 ? (
           <div className="space-y-2">
             {sortedTasks.map((task, index) => (
-              <React.Fragment key={task.id}>
-                {/* Add "Completed Tasks" partition header before the first completed task */}
-                {task.status === 'completed' && sortedTasks[index - 1]?.status !== 'completed' && (
+              // ✨ FIX: Use task._id for the key, as it's the unique identifier from MongoDB
+              <React.Fragment key={task._id}>
+                {task.status && sortedTasks[index - 1]?.status !== true && (
                   <div className="flex items-center justify-center text-neutral-400 font-semibold mt-6 mb-2 pt-2">
                     <span className="text-lg mr-2">Completed Tasks</span>
                     <span className="flex-grow border-b border-neutral-600"></span>
                   </div>
                 )}
                 <TaskItem
-                  task={{ ...task, displayIndex: index + 1 }} // Pass index for S.No. display
+                  task={{ ...task, displayIndex: index + 1 }}
                   toggleTaskStatus={toggleTaskStatus}
                   openTaskDetails={openTaskDetails}
                   deleteTask={deleteTask}

@@ -1,6 +1,6 @@
 import TaskDistributionChart from '../components/ChartLogic';
 import RecentTasksPreview from '../components/Tasks/RecentTasksPreview';
-import { useTasks } from '../hooks/useTasks';
+import { useTaskContext } from '../context/TaskContext'; // ✨ IMPORT CONTEXT
 import { useTaskStats, useTaskAnalytics } from '../hooks/useTaskStats';
 import { useState } from 'react';
 
@@ -17,7 +17,7 @@ function isTrivialStatsError(error) {
 }
 
 export default function Dashboard() {
-  const { tasks } = useTasks();
+  const { tasks } = useTaskContext(); // ✨ GET TASKS FROM CONTEXT
   const [range, setRange] = useState('weekly');
   const { stats, loading, error } = useTaskStats(range);
   const { data: chartData, loading: chartLoading, error: chartError } = useTaskAnalytics(range);
@@ -65,11 +65,9 @@ export default function Dashboard() {
                 {loading ? '...' : stats.pending}
               </span>
             </div>
-            {/* Only show error if it's not a trivial stats error */}
             {error && !isTrivialStatsError(error) && (
               <div className="text-rose-400 text-xs mt-2">{error}</div>
             )}
-            {/* Only show 'No tasks found' if no error and no tasks */}
           </div>
         </div>
 
@@ -86,6 +84,7 @@ export default function Dashboard() {
         </div>
       </div>
       {/* Recent tasks section */}
+      {/* ✨ PASS THE REAL TASKS DOWN */}
       <RecentTasksPreview tasks={tasks || []}/>
     </div>
   );

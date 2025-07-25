@@ -1,27 +1,26 @@
-import { useState, useEffect } from 'react';
+// Frontend/src/context/TaskContext.jsx
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = '/api/tasks';  // Keep this as /api/tasks
+const TaskContext = createContext();
 
-export const useTasks = () => {
+export const useTaskContext = () => useContext(TaskContext);
+
+const API_URL = '/api/tasks';
+
+export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [sortedTasks, setSortedTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Check if user is authenticated
-  const isAuthenticated = () => {
-    const token = localStorage.getItem('accessToken');
-    console.log('Access token:', token ? 'Present' : 'Missing');
-    return !!token;
-  };
+  const isAuthenticated = () => !!localStorage.getItem('accessToken');
 
-  // Fetch tasks from backend
   const fetchTasks = async () => {
     if (!isAuthenticated()) {
-      console.log('Not authenticated, redirecting to login');
       navigate('/login');
       return;
     }
@@ -29,24 +28,8 @@ export const useTasks = () => {
     setLoading(true);
     setError(null);
     try {
-      console.log('Fetching tasks from:', `${API_URL}/paginated`);
       const res = await fetchWithAuth(`${API_URL}/paginated`);
-      
-      // Log the raw response for debugging
-      const text = await res.text();
-      console.log('Raw response:', text);
-      
-      // Try to parse JSON
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        console.error('Failed to parse response as JSON:', e);
-        throw new Error('Invalid response from server');
-      }
-
-      console.log('Parsed response:', data);
-      
+      const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
       setTasks(data.tasks || []);
     } catch (err) {
@@ -66,33 +49,24 @@ export const useTasks = () => {
     } else {
       navigate('/login');
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    // Separate pending and completed tasks
     const pendingTasks = tasks.filter(task => !task.status);
     const completedTasks = tasks.filter(task => task.status);
-    // Sort completed tasks by dueDate (or createdAt if available)
-    completedTasks.sort((a, b) => new Date(b.dueDate || 0) - new Date(a.dueDate || 0));
+    completedTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     setSortedTasks([...pendingTasks, ...completedTasks]);
   }, [tasks]);
 
-  // Add task
   const addTask = async (newTaskData) => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
     }
-
     setError(null);
     try {
-      // Ensure status is boolean
-      const taskData = {
-        ...newTaskData,
-        status: Boolean(newTaskData.status)
-      };
-
+      const taskData = { ...newTaskData, status: Boolean(newTaskData.status) };
       const res = await fetchWithAuth(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -100,31 +74,25 @@ export const useTasks = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to add task');
-      await fetchTasks();
+      await fetchTasks(); // Refetch to get the latest list
     } catch (err) {
       setError(err.message);
-      if (err.message.includes('unauthorized') || err.message.includes('invalid token')) {
-        navigate('/login');
-      }
+      if (err.message.includes('unauthorized')) navigate('/login');
       throw err;
     }
   };
 
-  // Update task
   const updateTask = async (id, updatedTask) => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
     }
-
     setError(null);
     try {
-      // Ensure status is boolean if it's being updated
       const taskData = {
         ...updatedTask,
-        status: updatedTask.status !== undefined ? Boolean(updatedTask.status) : undefined
+        status: updatedTask.status !== undefined ? Boolean(updatedTask.status) : undefined,
       };
-
       const res = await fetchWithAuth(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -134,42 +102,35 @@ export const useTasks = () => {
         const data = await res.json();
         throw new Error(data.message || 'Failed to update task');
       }
-      await fetchTasks();
+      await fetchTasks(); // Refetch
     } catch (err) {
       setError(err.message);
-      if (err.message.includes('unauthorized') || err.message.includes('invalid token')) {
-        navigate('/login');
-      }
+      if (err.message.includes('unauthorized')) navigate('/login');
       throw err;
     }
   };
 
-  // Delete task
   const deleteTask = async (id) => {
     if (!isAuthenticated()) {
       navigate('/login');
       return;
     }
-
     setError(null);
     try {
-      const res = await fetchWithAuth(`${API_URL}/${id}`, {
-        method: 'DELETE'
-      });
+      const res = await fetchWithAuth(`${API_URL}/${id}`, { method: 'DELETE' });
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.message || 'Failed to delete task');
       }
+      // Optimistic update is fine here
       setTasks(prev => prev.filter(task => task._id !== id));
     } catch (err) {
       setError(err.message);
-      if (err.message.includes('unauthorized') || err.message.includes('invalid token')) {
-        navigate('/login');
-      }
+      if (err.message.includes('unauthorized')) navigate('/login');
     }
   };
 
-  return {
+  const value = {
     tasks,
     sortedTasks,
     loading,
@@ -179,4 +140,6 @@ export const useTasks = () => {
     updateTask,
     deleteTask,
   };
+
+  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };

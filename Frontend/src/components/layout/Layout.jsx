@@ -5,12 +5,11 @@ import FloatingActionButton from "../ui/FloatingActionButton";
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import AddTaskModal from "../modals/AddTaskModal";
-import { useTasks } from "../../hooks/useTasks";
+import { useTaskContext } from "../../Context/TaskContext"; // ✨ USE CONTEXT
 
-
-export default function Layout({ children }) {
+export default function Layout() {
   const [isAddTaskPopupOpen, setIsAddTaskPopupOpen] = useState(false);
-  const { addTask } = useTasks();
+  const { addTask } = useTaskContext(); // ✨ GET addTask from context
 
   return (
     <>
@@ -26,19 +25,7 @@ export default function Layout({ children }) {
       {isAddTaskPopupOpen && (
         <AddTaskModal
           onClose={() => setIsAddTaskPopupOpen(false)}
-          onAddTask={addTask}
-        />
-      )}
-
-      <FloatingActionButton onClick={() => setIsAddTaskPopupOpen(true)} />
-
-      {isAddTaskPopupOpen && (
-        <AddTaskModal
-          onClose={() => setIsAddTaskPopupOpen(false)}
-          onAddTask={(newTask) => {
-            // Handle adding task here or through context if needed
-            setIsAddTaskPopupOpen(false);
-          }}
+          onAddTask={addTask} // ✨ Pass the function from context
         />
       )}
     </>
