@@ -3,7 +3,7 @@ import Layout from "./components/layout/Layout.jsx";
 import HeroNavbar from "./components/layout/Navbar/HeroNavbar.jsx";
 import HeroSection from "./components/HeroSection.jsx";
 import Dashboard from "./pages/dashboard.jsx";
-import HomePage from "./pages/HomePage.jsx"; 
+import Tasks from "./pages/Tasks.jsx";  // Import Tasks instead of HomePage
 import Profile from "./pages/profile.jsx";
 import Logout from "./pages/logout.jsx";
 import Login from "./pages/Login.jsx";
@@ -30,8 +30,7 @@ function App() {
         {/* All other routes that use the dashboard layout */}
         <Route path="/home" element={<Layout />}>
           <Route path="/home/dashboard" element={<Dashboard />} />
-          {/* Use the HomePage component for the /home/tasks route */}
-          <Route path="/home/tasks" element={<HomePage />} />
+          <Route path="/home/tasks" element={<Tasks />} />  {/* Use Tasks component */}
           <Route path="/home/profile" element={<Profile />} />
           <Route path="/home/logout" element={<Logout />} />
         </Route>

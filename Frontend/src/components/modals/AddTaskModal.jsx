@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { enhanceDescriptionWithGemini } from '../../utils/geminiApi';
 
 const AddTaskModal = ({ onClose, onAddTask }) => {
@@ -7,12 +6,18 @@ const AddTaskModal = ({ onClose, onAddTask }) => {
     title: '',
     description: '',
     dueDate: '',
+    status: false  // Add status field
   });
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewTask(prev => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    // Handle checkbox separately
+    if (type === 'checkbox') {
+      setNewTask(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setNewTask(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleEnhanceDescription = async () => {
@@ -33,16 +38,25 @@ const AddTaskModal = ({ onClose, onAddTask }) => {
     }
   };
 
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newTask.title.trim()) {
       alert('Task title cannot be empty!');
       return;
     }
-    onAddTask(newTask);
-    setNewTask({ title: '', description: '', dueDate: '' }); // Clear form
-    onClose();
+    
+    try {
+      await onAddTask({
+        ...newTask,
+        status: Boolean(newTask.status),  // Ensure status is boolean
+        dueDate: newTask.dueDate || null  // Handle empty dueDate
+      });
+      setNewTask({ title: '', description: '', dueDate: '', status: false }); // Clear form
+      onClose();
+    } catch (error) {
+      console.error('Error adding task:', error);
+      alert('Failed to add task. Please try again.');
+    }
   };
 
   return (
@@ -80,6 +94,18 @@ const AddTaskModal = ({ onClose, onAddTask }) => {
               onChange={handleInputChange}
               className="w-full p-2 rounded-md bg-neutral-600 border border-neutral-500 text-neutral-100 focus:ring-rose-500 focus:border-rose-500"
             />
+          </div>
+          <div className="mb-4">
+            <label className="flex items-center space-x-2 text-neutral-300 text-sm font-medium">
+              <input
+                type="checkbox"
+                name="status"
+                checked={newTask.status}
+                onChange={handleInputChange}
+                className="rounded text-rose-500 focus:ring-rose-500"
+              />
+              <span>Mark as completed</span>
+            </label>
           </div>
           <div className="mb-6">
             <div className="flex justify-between items-center mb-1">

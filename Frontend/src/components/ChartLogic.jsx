@@ -1,4 +1,16 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+function isTrivialChartError(error) {
+  if (!error) return false;
+  const lower = error.toLowerCase();
+  return (
+    lower.includes('access token expired') ||
+    lower.includes('jwt expired') ||
+    lower.includes('invalid token')
+  );
+}
 
 // ✨ NEW: CustomTooltip component
 const CustomTooltip = ({ active, payload, label }) => {
@@ -15,21 +27,53 @@ const CustomTooltip = ({ active, payload, label }) => {
       </div>
     );
   }
-
   return null;
 };
 
-const TaskDistributionChart = () => {
-  const taskData = [
-    { name: 'Mon', total: 5, completed: 3, pending: 2 },
-    { name: 'Tue', total: 7, completed: 5, pending: 2 },
-    { name: 'Wed', total: 6, completed: 4, pending: 2 },
-    { name: 'Thu', total: 6, completed: 4, pending: 2 },
-    { name: 'Fri', total: 8, completed: 6, pending: 2 },
-    { name: 'Sat', total: 3, completed: 1, pending: 2 },
-    { name: 'Sun', total: 2, completed: 2, pending: 0 },
-  ];
+const Toast = ({ message, onClose }) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+  return (
+    <div className="fixed top-4 right-4 bg-rose-600 text-white px-4 py-2 rounded shadow-lg z-50 animate-fade-in">
+      {message}
+    </div>
+  );
+};
 
+const TaskDistributionChart = ({ taskData = [], error }) => {
+  const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(true);
+
+  useEffect(() => {
+    if (error) setShowToast(true);
+  }, [error]);
+
+  if (error && !isTrivialChartError(error) && showToast) {
+    return <Toast message={error} onClose={() => setShowToast(false)} />;
+  }
+
+  if (!taskData.length) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full w-full">
+        <div className="text-neutral-400 text-center py-4">You currently have no tasks. Hence, no data to show.</div>
+        <button
+          className="mt-4 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors"
+          onClick={() => navigate('/home/tasks')}
+        >
+          Add your first task
+        </button>
+      </div>
+    );
+  }
+  if (taskData.length < 3) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full w-full">
+        <div className="text-neutral-400 text-center py-4">Not enough data to show a chart. Add more tasks!</div>
+      </div>
+    );
+  }
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart

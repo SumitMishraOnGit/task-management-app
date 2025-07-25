@@ -1,0 +1,28 @@
+{
+  "name": "task-manager-codebase",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm run dev --prefix backend",
+    "client": "npm run dev --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumitMishraOnGit/task-management-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SumitMishraOnGit/task-management-app/issues"
+  },
+  "homepage": "https://github.com/SumitMishraOnGit/task-management-app#readme",
+  "description": "",
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
+}

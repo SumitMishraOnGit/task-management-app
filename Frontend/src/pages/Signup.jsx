@@ -14,7 +14,7 @@ const Signup = () => {
     setError("");
     setSuccess(false);
     try {
-      const res = await fetch("/api/users/signup", {
+      const res = await fetch("/users/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
