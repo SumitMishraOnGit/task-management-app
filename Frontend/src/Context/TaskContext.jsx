@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 import { useNavigate } from 'react-router-dom';
@@ -13,10 +14,9 @@ export const TaskProvider = ({ children }) => {
   const [sortedTasks, setSortedTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); 
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  // ... (isAuthenticated, fetchTasks, and other functions remain the same)
   const isAuthenticated = () => !!localStorage.getItem('accessToken');
 
   const fetchTasks = async () => {
@@ -32,7 +32,6 @@ export const TaskProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
       setTasks(data.tasks || []);
     } catch (err) {
-      console.error('Error fetching tasks:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -56,25 +55,67 @@ export const TaskProvider = ({ children }) => {
   }, [tasks]);
 
   const addTask = async (newTaskData) => {
-    // ... (addTask logic is unchanged)
+    try {
+      const taskData = { ...newTaskData, status: Boolean(newTaskData.status) };
+      const res = await fetchWithAuth(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to add task');
+      }
+      await fetchTasks();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
   };
 
   const updateTask = async (id, updatedTask) => {
-    // ... (updateTask logic is unchanged)
+    try {
+      const taskData = {
+        ...updatedTask,
+        status: updatedTask.status !== undefined ? Boolean(updatedTask.status) : undefined,
+      };
+      const res = await fetchWithAuth(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to update task');
+      }
+      await fetchTasks();
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
   };
 
   const deleteTask = async (id) => {
-    // ... (deleteTask logic is unchanged)
+    try {
+      const res = await fetchWithAuth(`${API_URL}/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to delete task');
+      }
+      // ✨ FIX: Refetch tasks from server for consistency
+      await fetchTasks();
+    } catch (err) {
+      setError(err.message);
+    }
   };
-
 
   const value = {
     tasks,
     sortedTasks,
     loading,
     error,
-    searchTerm, // ✨ PASS search term
-    setSearchTerm, // ✨ PASS the function to update it
+    searchTerm,
+    setSearchTerm,
     fetchTasks,
     addTask,
     updateTask,

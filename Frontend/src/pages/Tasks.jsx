@@ -1,5 +1,6 @@
+
 import React, { useState, useMemo } from 'react';
-import { useTaskContext } from '../context/TaskContext';
+import { useTaskContext } from '../Context/TaskContext';
 import TaskList from '../components/Tasks/TaskList';
 import AddTaskModal from '../components/modals/AddTaskModal';
 import TaskDetailsModal from '../components/modals/TaskDetailsModal';
@@ -65,7 +66,7 @@ function Tasks() {
           task={selectedTask}
           isOpen={!!selectedTask}
           onClose={() => setSelectedTask(null)}
-          // ✨ FIX: Changed prop name from onUpdate to onSave
+          // ✨ FIX: The prop name must be 'onSave' to match the modal
           onSave={updateTask}
           isEditMode={isEditMode}
         />
