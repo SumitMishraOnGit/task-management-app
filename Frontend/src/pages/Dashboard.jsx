@@ -1,6 +1,6 @@
 import TaskDistributionChart from '../components/ChartLogic';
 import RecentTasksPreview from '../components/Tasks/RecentTasksPreview';
-import { useTaskContext } from '../context/TaskContext'; // ✨ IMPORT CONTEXT
+import { useTaskContext } from '../Context/TaskContext'; // ✨ IMPORT CONTEXT
 import { useTaskStats, useTaskAnalytics } from '../hooks/useTaskStats';
 import { useState } from 'react';
 
@@ -27,7 +27,7 @@ export default function Dashboard() {
       {/* top 2 boxes in a row */}
       <div className="flex w-full gap-4 h-2/3">
         {/* first div for duration of data shown */}
-        <div className="dashboard-card w-2/7 rounded-2xl p-6 flex flex-col text-white">
+        <div className="dashboard-card w-2/7 rounded-2xl p-4 flex flex-col text-white">
           <h2 className="text-lg font-semibold text-neutral-200 mb-2">Statistics</h2>
           <p className="text-sm text-neutral-400 mb-6">Showing data for this {range}.</p>
 

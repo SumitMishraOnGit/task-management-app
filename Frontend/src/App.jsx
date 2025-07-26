@@ -1,4 +1,4 @@
-
+// for landing page on bento grid page use this feature : mention logos of bunch of hifi companies(google fb X) and then in grayish color say "these have nothing to do with this app!" 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/layout/Layout.jsx";
 import HeroNavbar from "./components/layout/Navbar/HeroNavbar.jsx";

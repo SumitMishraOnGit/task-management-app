@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
-import { useTaskContext } from '../Context/TaskContext'; // ✨ USE CONTEXT
+import React, { useState, useMemo } from 'react';
+import { useTaskContext } from '../context/TaskContext';
 import TaskList from '../components/Tasks/TaskList';
 import AddTaskModal from '../components/modals/AddTaskModal';
 import TaskDetailsModal from '../components/modals/TaskDetailsModal';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 
 function Tasks() {
-  // ✨ GET everything from context
-  const { sortedTasks, loading, error, addTask, updateTask, deleteTask } = useTaskContext();
+  const { sortedTasks, loading, error, addTask, updateTask, deleteTask, searchTerm } = useTaskContext();
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const handleToggleStatus = async (taskId) => {
+  const filteredTasks = useMemo(() => {
+    if (!searchTerm) {
+      return sortedTasks;
+    }
+    return sortedTasks.filter(task =>
+      task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (task.description && task.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  }, [sortedTasks, searchTerm]);
+
+  const handleToggleStatus = (taskId) => {
     const task = sortedTasks.find(t => t._id === taskId);
     if (task) {
-      await updateTask(taskId, { status: !task.status });
+      updateTask(taskId, { status: !task.status });
     }
   };
 
@@ -34,7 +43,7 @@ function Tasks() {
           <div className="text-rose-400 text-center py-4">{error}</div>
         ) : (
           <TaskList
-            sortedTasks={sortedTasks}
+            sortedTasks={filteredTasks}
             toggleTaskStatus={handleToggleStatus}
             openTaskDetails={openTaskDetails}
             deleteTask={deleteTask}
@@ -47,7 +56,7 @@ function Tasks() {
       {showAddModal && (
         <AddTaskModal
           onClose={() => setShowAddModal(false)}
-          onAddTask={addTask} // ✨ Directly pass addTask from context
+          onAddTask={addTask}
         />
       )}
 
@@ -56,7 +65,8 @@ function Tasks() {
           task={selectedTask}
           isOpen={!!selectedTask}
           onClose={() => setSelectedTask(null)}
-          onUpdate={updateTask} // ✨ Directly pass updateTask from context
+          // ✨ FIX: Changed prop name from onUpdate to onSave
+          onSave={updateTask}
           isEditMode={isEditMode}
         />
       )}

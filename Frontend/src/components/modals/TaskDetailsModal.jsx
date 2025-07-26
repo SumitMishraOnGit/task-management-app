@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-const TaskDetailsModal = ({ task, onClose, onSave }) => {
-  const [isEditingTask, setIsEditingTask] = useState(false);
+const TaskDetailsModal = ({ task, isOpen, onClose, onSave, isEditMode }) => {
+  const [isEditingTask, setIsEditingTask] = useState(isEditMode);
   const [editedTask, setEditedTask] = useState(task);
 
   useEffect(() => {
     setEditedTask(task);
-  }, [task]);
+    setIsEditingTask(isEditMode);
+  }, [task, isEditMode]);
+
+  if (!isOpen) return null;
 
   const handleEditInputChange = (e) => {
     const { name, value } = e.target;
@@ -19,16 +22,17 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
       alert('Task title cannot be empty!');
       return;
     }
-    onSave(editedTask);
-    setIsEditingTask(false);
+    onSave(task._id, editedTask);
     onClose();
   };
+  
+  const formattedDueDate = editedTask.dueDate ? new Date(editedTask.dueDate).toISOString().split('T')[0] : '';
 
   return (
     <div className="fixed inset-0 bg-neutral-900/50 flex items-center justify-center z-[100]" style={{ backdropFilter: 'blur(4px)' }}>
-      <div className="bg-neutral-800/70  border-t border-neutral-600 rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-md relative">
+      <div className="bg-neutral-800/70 border-t border-neutral-600 rounded-xl shadow-2xl p-6 md:p-8 w-11/12 max-w-md relative">
         <button
-          onClick={() => { onClose(); setIsEditingTask(false); }}
+          onClick={onClose}
           className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-100 text-3xl font-bold transition-colors duration-200"
           aria-label="Close"
         >
@@ -40,6 +44,7 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
 
         {isEditingTask ? (
           <form onSubmit={handleSaveEditedTask}>
+            {/* Form content remains the same... */}
             <div className="mb-4">
               <label htmlFor="editTitle" className="block text-neutral-300 text-sm font-medium mb-1">Task Title</label>
               <input
@@ -58,7 +63,7 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
                 type="date"
                 id="editDueDate"
                 name="dueDate"
-                value={editedTask.dueDate || ''}
+                value={formattedDueDate}
                 onChange={handleEditInputChange}
                 className="w-full p-2 rounded-md bg-neutral-600 border border-neutral-500 text-neutral-100 focus:ring-rose-500 focus:border-rose-500"
               />
@@ -68,7 +73,7 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
               <textarea
                 id="editDescription"
                 name="description"
-                value={editedTask.description}
+                value={editedTask.description || ''}
                 onChange={handleEditInputChange}
                 rows="5"
                 className="w-full p-2 rounded-md bg-neutral-600 border border-neutral-500 text-neutral-100 focus:ring-rose-500 focus:border-rose-500"
@@ -92,16 +97,17 @@ const TaskDetailsModal = ({ task, onClose, onSave }) => {
           </form>
         ) : (
           <div className="space-y-4 text-neutral-300">
+            {/* View content remains the same... */}
             <div>
               <p className="font-semibold text-lg text-neutral-50">{task.title}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-neutral-400 mb-1">Description:</p>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap">{task.description}</p>
+              <p className="text-sm leading-relaxed whitespace-pre-wrap">{task.description || 'No description provided.'}</p>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <p><span className="font-medium text-neutral-400">Due Date:</span> {task.dueDate || 'N/A'}</p>
-              <p><span className="font-medium text-neutral-400">Status:</span> {task.status === 'completed' ? 'Completed' : 'Pending'}</p>
+              <p><span className="font-medium text-neutral-400">Due Date:</span> {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No date'}</p>
+              <p><span className="font-medium text-neutral-400">Status:</span> {task.status ? 'Completed' : 'Pending'}</p>
             </div>
             <div className="flex justify-end pt-4 border-t border-neutral-700">
               <button

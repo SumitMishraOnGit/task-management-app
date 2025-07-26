@@ -13,20 +13,20 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask }) => {
     return description;
   };
 
-  // Format date to readable string
   const formatDate = (dateString) => {
-    if (!dateString) return '';
+    if (!dateString) return 'No date';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     });
   };
 
   return (
+    // ✨ FIX 1: Added min-h-[75px] for consistent height and flex for alignment
     <div
-      className={`group grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out relative
+      className={`group grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center p-4 rounded-lg shadow-md transition-all duration-300 ease-in-out relative min-h-[75px]
         ${task.status
           ? 'bg-rose-700/30 border border-rose-600 scale-98 opacity-70'
           : 'bg-neutral-800 border border-neutral-700/50 hover:bg-neutral-700 scale-100 opacity-100'
@@ -61,7 +61,7 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask }) => {
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={() => {
-          deleteTask(task._id);  // Use _id instead of id
+          deleteTask(task._id);
           setIsDeleteModalOpen(false);
         }}
         taskTitle={task.title}
@@ -73,25 +73,21 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask }) => {
       </div>
 
       {/* Task Details */}
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center"> {/* Centered content vertically */}
         <h3 className={`font-semibold text-base ${task.status ? 'line-through text-neutral-400' : 'text-neutral-50'}`}>
           {task.title}
         </h3>
-        {task.description && task.description.split(/\s+/).length > 20 ? (
-          <p className={`text-xs ${task.status ? 'line-through text-neutral-500' : 'text-neutral-400'}`}>
-            {truncateDescription(task.description, 20)}
-            <button
-              type="button"
-              onClick={() => openTaskDetails(task)}
-              className="ml-1 text-rose-400 hover:text-rose-300 font-medium"
-            >
-              Show More
-            </button>
-          </p>
-        ) : (
-          <p className={`text-xs ${task.status ? 'line-through text-neutral-500' : 'text-neutral-400'}`}>
-            {task.description}
-          </p>
+        {task.description && (
+            <p className={`text-xs mt-1 ${task.status ? 'line-through text-neutral-500' : 'text-neutral-400'}`}>
+                {truncateDescription(task.description, 15)}
+                <button
+                type="button"
+                onClick={() => openTaskDetails(task)}
+                className="ml-1 text-rose-400 hover:text-rose-300 font-medium"
+                >
+                Show More
+                </button>
+            </p>
         )}
       </div>
 
@@ -107,12 +103,9 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask }) => {
             type="checkbox"
             className="sr-only peer"
             checked={task.status}
-            onChange={() => toggleTaskStatus(task._id)}  // Use _id instead of id
+            onChange={() => toggleTaskStatus(task._id)}
           />
           <div className="w-9 h-5 bg-neutral-500 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-rose-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-neutral-300 after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600"></div>
-          <span className="ml-2 text-xs font-medium text-neutral-300 hidden sm:block">
-            {task.status ? 'Done' : 'Pending'}
-          </span>
         </label>
       </div>
     </div>

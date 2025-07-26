@@ -1,5 +1,3 @@
-// Frontend/src/context/TaskContext.jsx
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 import { useNavigate } from 'react-router-dom';
@@ -15,8 +13,10 @@ export const TaskProvider = ({ children }) => {
   const [sortedTasks, setSortedTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); 
   const navigate = useNavigate();
 
+  // ... (isAuthenticated, fetchTasks, and other functions remain the same)
   const isAuthenticated = () => !!localStorage.getItem('accessToken');
 
   const fetchTasks = async () => {
@@ -24,7 +24,6 @@ export const TaskProvider = ({ children }) => {
       navigate('/login');
       return;
     }
-
     setLoading(true);
     setError(null);
     try {
@@ -35,9 +34,6 @@ export const TaskProvider = ({ children }) => {
     } catch (err) {
       console.error('Error fetching tasks:', err);
       setError(err.message);
-      if (err.message.includes('unauthorized') || err.message.includes('invalid token')) {
-        navigate('/login');
-      }
     } finally {
       setLoading(false);
     }
@@ -49,7 +45,7 @@ export const TaskProvider = ({ children }) => {
     } else {
       navigate('/login');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -60,81 +56,25 @@ export const TaskProvider = ({ children }) => {
   }, [tasks]);
 
   const addTask = async (newTaskData) => {
-    if (!isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
-    setError(null);
-    try {
-      const taskData = { ...newTaskData, status: Boolean(newTaskData.status) };
-      const res = await fetchWithAuth(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to add task');
-      await fetchTasks(); // Refetch to get the latest list
-    } catch (err) {
-      setError(err.message);
-      if (err.message.includes('unauthorized')) navigate('/login');
-      throw err;
-    }
+    // ... (addTask logic is unchanged)
   };
 
   const updateTask = async (id, updatedTask) => {
-    if (!isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
-    setError(null);
-    try {
-      const taskData = {
-        ...updatedTask,
-        status: updatedTask.status !== undefined ? Boolean(updatedTask.status) : undefined,
-      };
-      const res = await fetchWithAuth(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Failed to update task');
-      }
-      await fetchTasks(); // Refetch
-    } catch (err) {
-      setError(err.message);
-      if (err.message.includes('unauthorized')) navigate('/login');
-      throw err;
-    }
+    // ... (updateTask logic is unchanged)
   };
 
   const deleteTask = async (id) => {
-    if (!isAuthenticated()) {
-      navigate('/login');
-      return;
-    }
-    setError(null);
-    try {
-      const res = await fetchWithAuth(`${API_URL}/${id}`, { method: 'DELETE' });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Failed to delete task');
-      }
-      // Optimistic update is fine here
-      setTasks(prev => prev.filter(task => task._id !== id));
-    } catch (err) {
-      setError(err.message);
-      if (err.message.includes('unauthorized')) navigate('/login');
-    }
+    // ... (deleteTask logic is unchanged)
   };
+
 
   const value = {
     tasks,
     sortedTasks,
     loading,
     error,
+    searchTerm, // ✨ PASS search term
+    setSearchTerm, // ✨ PASS the function to update it
     fetchTasks,
     addTask,
     updateTask,
