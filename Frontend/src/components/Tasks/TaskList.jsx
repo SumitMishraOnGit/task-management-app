@@ -4,7 +4,7 @@ import React from 'react';
 import TaskItem from './TaskItem';
 import { AnimatePresence } from 'framer-motion';
 
-const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask, highlightedTaskId, activityIndicators }) => {
+const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask, highlightedTaskId, activityIndicators, loading }) => {
   return (
     <div className="flex flex-col h-full">
       <div className="grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center mb-4 pb-2 border-b border-neutral-600 text-neutral-400 font-semibold text-sm md:text-base">
@@ -38,4 +38,4 @@ const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask, 
   );
 };
 
-export default TaskList;  
+export default TaskList;

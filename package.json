@@ -23,6 +23,7 @@
     "concurrently": "^9.2.0"
   },
   "dependencies": {
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "framer-motion": "^12.23.11"
   }
 }

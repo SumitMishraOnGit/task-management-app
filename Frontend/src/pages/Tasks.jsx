@@ -5,6 +5,7 @@ import { useTaskContext } from '../Context/TaskContext';
 import TaskList from '../components/Tasks/TaskList';
 import AddTaskModal from '../components/modals/AddTaskModal';
 import TaskDetailsModal from '../components/modals/TaskDetailsModal';
+import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 
 function Tasks() {
@@ -16,6 +17,7 @@ function Tasks() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState(null);
 
   useEffect(() => {
     if (highlightedTaskId) {
@@ -47,6 +49,17 @@ function Tasks() {
     setSelectedTask(task);
     setIsEditMode(editMode);
   };
+  
+  const handleDeleteRequest = (task) => {
+    setTaskToDelete(task);
+  };
+
+  const handleConfirmDelete = () => {
+    if (taskToDelete) {
+      deleteTask(taskToDelete._id);
+      setTaskToDelete(null);
+    }
+  };
 
   return (
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-3 overflow-hidden">
@@ -60,16 +73,28 @@ function Tasks() {
             sortedTasks={filteredTasks}
             toggleTaskStatus={handleToggleStatus}
             openTaskDetails={openTaskDetails}
-            deleteTask={deleteTask}
+            deleteTask={handleDeleteRequest}
             highlightedTaskId={highlightedTaskId}
             activityIndicators={activityIndicators}
+            loading={loading} // ✨ FIX: Pass the loading prop down
           />
         )}
       </div>
       
-      {showAddModal && <AddTaskModal onClose={() => setShowAddModal(false)} onAddTask={addTask} />}
-      {selectedTask && <TaskDetailsModal task={selectedTask} isOpen={!!selectedTask} onClose={() => setSelectedTask(null)} onSave={updateTask} isEditMode={isEditMode} />}
       <FloatingActionButton onClick={() => setShowAddModal(true)} />
+      
+      {showAddModal && <AddTaskModal onClose={() => setShowAddModal(false)} onAddTask={addTask} />}
+      
+      {selectedTask && <TaskDetailsModal task={selectedTask} isOpen={!!selectedTask} onClose={() => setSelectedTask(null)} onSave={updateTask} isEditMode={isEditMode} />}
+      
+      {taskToDelete && (
+        <DeleteConfirmationModal
+          isOpen={!!taskToDelete}
+          onClose={() => setTaskToDelete(null)}
+          onConfirm={handleConfirmDelete}
+          taskTitle={taskToDelete.title}
+        />
+      )}
     </div>
   );
 }
