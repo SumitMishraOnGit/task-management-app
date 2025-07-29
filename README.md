@@ -19,24 +19,6 @@ Before you begin, ensure you have installed:
 - MongoDB
 - npm or yarn
 
-## Environment Variables
-
-Create a `.env` file in the Backend directory with these variables:
-
-```env
-# Server Configuration
-PORT=5000
-NODE_ENV=development
-
-# MongoDB Configuration
-MONGO_URI=your_mongodb_connection_string
-
-# JWT Configuration
-JWT_ACCESS_SECRET=your_access_token_secret
-JWT_REFRESH_SECRET=your_refresh_token_secret
-ACCESS_TOKEN_EXPIRY=15m
-REFRESH_TOKEN_EXPIRY=7d
-```
 
 ## Installation
 
