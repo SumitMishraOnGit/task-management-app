@@ -54,13 +54,13 @@ const Login = () => {
       {/* Main content container, centered on the page */}
       <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-8">
         
-        {/* The main panel with a more visible border */}
-        <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden border border-neutral-800">
+        {/* The main panel. The outer border is created with a ring utility. */}
+        <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden ring-1 ring-neutral-800">
           
-          {/* Left Side: Now opaque, with the blobby background contained within it. */}
-          <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden">
+          {/* Left Side: Now opaque, with the blobby background contained within it. A right border is added to create the dividing line. */}
+          <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden border-r border-neutral-800">
             {/* The background is now positioned absolutely inside this left panel */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-0 overflow-hidden">
                <BlobbyBackground />
             </div>
             {/* The text content needs a relative z-index to appear on top of its background */}
@@ -78,9 +78,9 @@ const Login = () => {
           </div>
 
           {/* Right Side: The login form with its own semi-transparent background */}
-          <div className="w-full md:w-1/2 h-full bg-neutral-900/70 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
+          <div className="w-full md:w-1/2 h-full bg-neutral-900/70 rounded-2xl border border-neutral-700 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
             <div className="w-full max-w-md">
-              <h2 className="text-3xl font-bold text-white mb-8 text-center">Login</h2>
+              <h2 className="text-4xl font-bold text-white mb-8 text-center">Login</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <input

@@ -110,6 +110,7 @@ export default function Profile() {
         }
     };
 
+
     if (loading) {
         return <div className="p-8 text-white">Loading profile...</div>;
     }
