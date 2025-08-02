@@ -11,13 +11,13 @@ const ActivityHeatmap = () => {
     const fetchHeatmapData = async () => {
       try {
         const res = await fetchWithAuth('/api/users/profile/activity-heatmap');
-        
+
         // ✨ FIX: Check for content before parsing JSON
         const responseText = await res.text();
         const activityData = responseText ? JSON.parse(responseText) : [];
 
         if (!res.ok) throw new Error('Failed to fetch activity data');
-        
+
         // Convert array to a map for quick lookups
         const dataMap = activityData.reduce((acc, item) => {
           acc[item.date] = item.count;
@@ -58,16 +58,16 @@ const ActivityHeatmap = () => {
   const days = getDaysInLastYear();
 
   return (
-    <div className="dashboard-card p-6">
+    <div className="dashboard-card pb-8 p-4">
       <h3 className="text-lg font-semibold text-white mb-4">Activity</h3>
-      <div className="grid grid-rows-7 grid-flow-col gap-1">
+      <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-hidden max-w-full">
         {days.map((day, index) => {
           const dateString = day.toISOString().split('T')[0];
           const count = data[dateString] || 0;
           return (
             <div key={index} className="relative group">
               <div className={`w-3 h-3 rounded-sm ${getColorClass(count)}`}></div>
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                 {count} {count === 1 ? 'task' : 'tasks'} on {day.toLocaleDateString()}
               </div>
             </div>

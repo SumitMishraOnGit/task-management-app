@@ -16,6 +16,12 @@ export default defineConfig({
         target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false
+      },
+      // ✨ ADD THIS PROXY FOR IMAGES
+      '/uploads': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
       }
     }
   }

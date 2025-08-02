@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import BlobbyBackground from "../components/ui/BlobbyBackground.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Handles the form submission for logging in.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -48,54 +50,85 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
-      <div className="bg-neutral-800 p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h2 className="text-2xl font-bold text-white mb-6 text-center">Login</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full p-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
-            />
+    <div className="relative h-screen w-full overflow-hidden bg-neutral-900">
+      {/* Main content container, centered on the page */}
+      <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-8">
+        
+        {/* The main panel with a more visible border */}
+        <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden border border-neutral-800">
+          
+          {/* Left Side: Now opaque, with the blobby background contained within it. */}
+          <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden">
+            {/* The background is now positioned absolutely inside this left panel */}
+            <div className="absolute inset-0 z-0">
+               <BlobbyBackground />
+            </div>
+            {/* The text content needs a relative z-index to appear on top of its background */}
+            <div className="relative z-10 text-center">
+                <h1
+                  className="text-white text-5xl lg:text-6xl text-center leading-tight font-bold"
+                  style={{ fontFamily: '"Jersey 15", cursive' }}
+                >
+                  Rise Together,<br />Build More.
+                </h1>
+                <p className="text-neutral-300 mt-4 text-center max-w-sm">
+                  Join our community and start collaborating on amazing projects today.
+                </p>
+            </div>
           </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full p-3 rounded-lg bg-neutral-700 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
-            />
+
+          {/* Right Side: The login form with its own semi-transparent background */}
+          <div className="w-full md:w-1/2 h-full bg-neutral-900/70 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
+            <div className="w-full max-w-md">
+              <h2 className="text-3xl font-bold text-white mb-8 text-center">Login</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    className="w-full p-3 rounded-lg bg-neutral-700/50 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="w-full p-3 rounded-lg bg-neutral-700/50 border border-neutral-600 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className={`w-full p-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors duration-300 ease-in-out ${
+                    loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-100"
+                  }`}
+                >
+                  {loading ? "Logging in..." : "Login"}
+                </button>
+              </form>
+              {error && (
+                <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm animate-pulse">
+                  {error}
+                </div>
+              )}
+              <div className="mt-6 text-center text-neutral-400">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-rose-500 hover:text-rose-400 font-medium">
+                  Sign up
+                </Link>
+              </div>
+            </div>
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full p-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-        {error && (
-          <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
-            {error}
-          </div>
-        )}
-        <div className="mt-6 text-center text-neutral-400">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-rose-500 hover:text-rose-400 font-medium">
-            Sign up
-          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login; 
+export default Login;
