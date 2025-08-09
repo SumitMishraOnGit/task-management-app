@@ -171,7 +171,7 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    {/* 👇 Subtle partition line added here 👇 */}
+                    {/*  Subtle partition line added here  */}
                     <div className="w-full h-px bg-neutral-700 my-8"></div>
 
                     {/* Activity Heatmap */}

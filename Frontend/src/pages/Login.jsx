@@ -36,7 +36,6 @@ const Login = () => {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
-      // Clear any existing error
       setError("");
       
       // Navigate to dashboard with correct path
@@ -51,19 +50,13 @@ const Login = () => {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-neutral-900">
-      {/* Main content container, centered on the page */}
       <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-8">
-        
-        {/* The main panel. The outer border is created with a ring utility. */}
         <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden ring-1 ring-neutral-800">
-          
           {/* Left Side: Now opaque, with the blobby background contained within it. A right border is added to create the dividing line. */}
           <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden border-r border-neutral-800">
-            {/* The background is now positioned absolutely inside this left panel */}
             <div className="absolute inset-0 z-0 overflow-hidden">
                <BlobbyBackground />
             </div>
-            {/* The text content needs a relative z-index to appear on top of its background */}
             <div className="relative z-10 text-center">
                 <h1
                   className="text-white text-5xl lg:text-6xl text-center leading-tight font-bold"
@@ -77,7 +70,7 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Right Side: The login form with its own semi-transparent background */}
+          {/* Right Side: The login form  */}
           <div className="w-full md:w-1/2 h-full bg-neutral-900/70 rounded-2xl border border-neutral-700 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
             <div className="w-full max-w-md">
               <h2 className="text-4xl font-bold text-white mb-8 text-center">Login</h2>

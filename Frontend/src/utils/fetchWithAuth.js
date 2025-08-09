@@ -1,4 +1,5 @@
-// Utility to handle authenticated fetch with automatic token refresh
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export async function fetchWithAuth(url, options = {}) {
   const getAuthHeader = () => {
     const token = localStorage.getItem('accessToken');
@@ -22,14 +23,14 @@ export async function fetchWithAuth(url, options = {}) {
   };
 
   try {
-    let response = await fetch(url, options);
+    let response = await fetch(`${API_BASE_URL}${url}`, options);
 
     // If access token expired, try to refresh
     if (response.status === 401) {
       console.log('Access token expired, attempting refresh...');
       
       // Try to refresh the token
-      const refreshRes = await fetch('/users/refresh-token', {
+      const refreshRes = await fetch(`${API_BASE_URL}/users/refresh-token`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -50,7 +51,7 @@ export async function fetchWithAuth(url, options = {}) {
             Authorization: `Bearer ${data.accessToken}`,
           };
           
-          response = await fetch(url, options);
+          response = await fetch(`${API_BASE_URL}${url}`, options);
           if (!response.ok) {
             throw new Error('Request failed after token refresh');
           }
@@ -71,4 +72,4 @@ export async function fetchWithAuth(url, options = {}) {
     window.location.href = '/login';
     throw error;
   }
-} 
+}
