@@ -12,7 +12,7 @@ app.use(express.json());
 
 // This list contains all the URLs that are allowed to make requests to your backend.
 const allowedOrigins = [
-  'http://localhost:5173', // Your local frontend for development
+  'http://localhost:5173', 
   'https://al-together.netlify.app' 
 ];
 
