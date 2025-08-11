@@ -11,13 +11,26 @@ import { TaskProvider } from "./Context/TaskContext.jsx";
 import { PrivateRoute } from "./components/PrivateRoute.jsx";
 
 function App() {
+  // Check if user is authenticated
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('accessToken');
+    return !!token;
+  };
+
+  // Redirect component for authenticated users
+  const AuthRedirect = () => {
+    return isAuthenticated() ? <Navigate to="/home/dashboard" replace /> : <Login />;
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
+        {/* Public routes */}
+        <Route path="/" element={<AuthRedirect />} />
+        <Route path="/login" element={<AuthRedirect />} />
         <Route path="/signup" element={<Signup />} />
 
+        {/* Protected routes */}
         <Route
           path="/home"
           element={
@@ -28,11 +41,14 @@ function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/home/dashboard" element={<Dashboard />} />
-          <Route path="/home/tasks" element={<Tasks />} />
-          <Route path="/home/profile" element={<Profile />} />
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="tasks" element={<Tasks />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
-        <Route path="/" element={<Login />} />
+
+        {/* Catch all route - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

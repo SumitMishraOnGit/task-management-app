@@ -1,8 +1,8 @@
 import TaskDistributionChart from '../components/ChartLogic';
 import RecentTasksPreview from '../components/Tasks/RecentTasksPreview';
-import { useTaskContext } from '../Context/TaskContext'; // ✨ IMPORT CONTEXT
+import { useTaskContext } from '../Context/TaskContext';
 import { useTaskStats, useTaskAnalytics } from '../hooks/useTaskStats';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function isTrivialStatsError(error) {
   if (!error) return false;
@@ -21,6 +21,22 @@ export default function Dashboard() {
   const [range, setRange] = useState('weekly');
   const { stats, loading: statsLoading, error: statsError } = useTaskStats(range);
   const { data: chartData, loading: chartLoading, error: chartError } = useTaskAnalytics(range);
+
+  // Handle loading and error states
+  if (tasksLoading || statsLoading || chartLoading) {
+    return (
+      <div className="p-4">
+        <div className="animate-pulse space-y-4">
+          <div className="h-48 bg-gray-200 rounded"></div>
+          <div className="h-32 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (tasksError && !isTrivialStatsError(tasksError)) {
+    return <div className="p-4 text-red-500">Error loading dashboard: {tasksError}</div>;
+  }
 
   // Refresh stats when tasks change
   useEffect(() => {

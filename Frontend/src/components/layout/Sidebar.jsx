@@ -1,14 +1,15 @@
 // Frontend/src/components/layout/Sidebar.jsx
 
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import LogoutConfirmationModal from "../modals/LogoutConfirmationModal";
 
 export default function Sidebar() {
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogoutRequest = () => {
-    setIsLogoutModalOpen(true); // Just open the modal
+    setIsLogoutModalOpen(true);
   };
 
   const confirmLogout = async () => {
@@ -24,7 +25,7 @@ export default function Sidebar() {
     } finally {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      window.location.href = '/login';
+      navigate('/login');
     }
   };
 

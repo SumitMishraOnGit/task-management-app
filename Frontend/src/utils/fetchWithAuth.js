@@ -16,8 +16,7 @@ export async function fetchWithAuth(url, options = {}) {
   const refreshToken = localStorage.getItem('refreshToken');
 
   if (!accessToken || !refreshToken) {
-    console.log('No tokens found, redirecting to login');
-    window.location.href = '/';
+    console.log('No tokens found, authentication required');
     throw new Error('No authentication tokens found');
   }
 
