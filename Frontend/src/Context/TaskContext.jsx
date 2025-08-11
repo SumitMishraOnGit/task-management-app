@@ -24,7 +24,7 @@ export const TaskProvider = ({ children }) => {
 
   const fetchTasks = async () => {
     if (!isAuthenticated()) {
-      navigate('/login');
+      navigate('/');
       return;
     }
     setLoading(true);

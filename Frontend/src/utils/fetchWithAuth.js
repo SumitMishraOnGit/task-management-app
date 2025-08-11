@@ -12,7 +12,6 @@ export async function fetchWithAuth(url, options = {}) {
   const refreshToken = localStorage.getItem('refreshToken');
 
   if (!accessToken || !refreshToken) {
-    window.location.href = '/login';
     throw new Error('No authentication tokens found');
   }
 
@@ -61,7 +60,6 @@ export async function fetchWithAuth(url, options = {}) {
     console.error('Auth Error:', error.message);
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    window.location.href = '/login';
     throw error;
   }
 }

@@ -9,8 +9,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // For debugging, let's log the variable right when the component loads
-  console.log("VITE_API_BASE_URL is:", import.meta.env.VITE_API_BASE_URL);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
