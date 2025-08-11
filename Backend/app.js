@@ -13,7 +13,7 @@ app.use(express.json());
 // This list contains all the URLs that are allowed to make requests to your backend.
 const allowedOrigins = [
   'http://localhost:5173', 
-  'https://al-together.netlify.app' 
+  'https://al-together.netlify.app'
 ];
 
 app.use(cors({
@@ -24,8 +24,15 @@ app.use(cors({
       return callback(new Error(msg), false);
     }
     return callback(null, true);
-  }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
+
+// Add a root route for health check
+app.get('/', (req, res) => {
+  res.json({ status: 'Server is running!' });
+});
 
 
 // Routes
