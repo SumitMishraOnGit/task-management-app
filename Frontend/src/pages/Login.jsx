@@ -9,6 +9,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  console.log("Connecting to API at:", import.meta.env.VITE_API_BASE_URL);
+
   // Handles the form submission for logging in.
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +62,6 @@ const Login = () => {
             <div className="relative z-10 text-center">
                 <h1
                   className="text-white text-5xl lg:text-6xl text-center leading-tight font-bold"
-                  style={{ fontFamily: '"Jersey 15", cursive' }}
                 >
                   Rise Together,<br />Build More.
                 </h1>
