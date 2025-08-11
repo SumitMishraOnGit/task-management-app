@@ -8,7 +8,7 @@ const TaskContext = createContext();
 
 export const useTaskContext = () => useContext(TaskContext);
 
-const API_URL = '/api/tasks';
+const API_URL = `${import.meta.env.VITE_API_BASE_URL}/tasks`;
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
@@ -30,10 +30,10 @@ export const TaskProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetchWithAuth(`${API_URL}/paginated`);
+      const res = await fetchWithAuth(API_URL);
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
-      setTasks(data.tasks || []);
+      setTasks(Array.isArray(data) ? data : (data.tasks || []));
     } catch (err) {
       setError(err.message);
     } finally {
