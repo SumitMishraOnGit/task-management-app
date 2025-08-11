@@ -6,6 +6,70 @@ const uploadTaskFile = require("../../middlewares/multerTasks");
 const { buildTaskQuery, getSortOption } = require("../../utils/taskQueryUtils");
 const mongoose = require('mongoose'); 
 
+// GET /tasks/stats?range=weekly|monthly
+router.get("/stats", verifyToken, async (req, res, next) => {
+  try {
+    const { range = 'weekly' } = req.query;
+    const userId = req.user.userId || req.user._id;
+
+    // Calculate the start date based on the range
+    const startDate = new Date();
+    if (range === 'weekly') {
+      startDate.setDate(startDate.getDate() - 7);
+    } else if (range === 'monthly') {
+      startDate.setMonth(startDate.getMonth() - 1);
+    }
+
+    // Get task statistics
+    const [total, completed, pending] = await Promise.all([
+      Task.countDocuments({ createdBy: userId, createdAt: { $gte: startDate } }),
+      Task.countDocuments({ createdBy: userId, status: true, createdAt: { $gte: startDate } }),
+      Task.countDocuments({ createdBy: userId, status: false, createdAt: { $gte: startDate } })
+    ]);
+
+    res.json({ total, completed, pending });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /tasks/analytics?range=weekly|monthly
+router.get("/analytics", verifyToken, async (req, res, next) => {
+  try {
+    const { range = 'weekly' } = req.query;
+    const userId = req.user.userId || req.user._id;
+
+    const startDate = new Date();
+    if (range === 'weekly') {
+      startDate.setDate(startDate.getDate() - 7);
+    } else if (range === 'monthly') {
+      startDate.setMonth(startDate.getMonth() - 1);
+    }
+
+    const tasks = await Task.find({
+      createdBy: userId,
+      createdAt: { $gte: startDate }
+    }).select('status createdAt');
+
+    // Group tasks by date
+    const analytics = tasks.reduce((acc, task) => {
+      const date = task.createdAt.toISOString().split('T')[0];
+      if (!acc[date]) {
+        acc[date] = { total: 0, completed: 0 };
+      }
+      acc[date].total++;
+      if (task.status) {
+        acc[date].completed++;
+      }
+      return acc;
+    }, {});
+
+    res.json(analytics);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Create a new task with file upload
 router.post("/", verifyToken, uploadTaskFile.single('taskFile'), async (req, res, next) => {
   try {

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 
-// ✨ FIX: Add the '/api' prefix to the URLs
-const API_URL = '/api/tasks/stats';
-const ANALYTICS_URL = '/api/tasks/analytics';
+const API_URL = '/tasks/stats';
+const ANALYTICS_URL = '/tasks/analytics';
 
 export const useTaskStats = (range = 'weekly') => {
   const [stats, setStats] = useState({ total: 0, completed: 0, pending: 0 });

@@ -8,7 +8,7 @@ const TaskContext = createContext();
 
 export const useTaskContext = () => useContext(TaskContext);
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/tasks`;
+const API_URL = '/tasks';
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
