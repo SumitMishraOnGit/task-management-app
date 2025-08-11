@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+// Frontend/src/utils/fetchWithAuth.js
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchWithAuth(url, options = {}) {
   const getAuthHeader = () => {
@@ -6,17 +8,14 @@ export async function fetchWithAuth(url, options = {}) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  // First, check if we have tokens
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
 
   if (!accessToken || !refreshToken) {
-    // No tokens, redirect to login
     window.location.href = '/login';
     throw new Error('No authentication tokens found');
   }
 
-  // Attach access token to request
   options.headers = {
     ...options.headers,
     ...getAuthHeader(),
@@ -25,16 +24,11 @@ export async function fetchWithAuth(url, options = {}) {
   try {
     let response = await fetch(`${API_BASE_URL}${url}`, options);
 
-    // If access token expired, try to refresh
     if (response.status === 401) {
       console.log('Access token expired, attempting refresh...');
-      
-      // Try to refresh the token
       const refreshRes = await fetch(`${API_BASE_URL}/users/refresh-token`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refreshToken }),
       });
 
@@ -42,19 +36,11 @@ export async function fetchWithAuth(url, options = {}) {
         const data = await refreshRes.json();
         if (data.accessToken) {
           console.log('Token refreshed successfully');
-          // Save new access token
           localStorage.setItem('accessToken', data.accessToken);
+          options.headers['Authorization'] = `Bearer ${data.accessToken}`;
           
-          // Retry original request with new token
-          options.headers = {
-            ...options.headers,
-            Authorization: `Bearer ${data.accessToken}`,
-          };
-          
+          // Retry the original request
           response = await fetch(`${API_BASE_URL}${url}`, options);
-          if (!response.ok) {
-            throw new Error('Request failed after token refresh');
-          }
         } else {
           throw new Error('No access token in refresh response');
         }
@@ -63,10 +49,16 @@ export async function fetchWithAuth(url, options = {}) {
       }
     }
 
+    if (!response.ok) {
+        // If the response is not JSON, we throw a more specific error.
+        const errorText = await response.text();
+        console.error("Server responded with an error:", errorText);
+        throw new Error(`Request failed: ${response.statusText}`);
+    }
+
     return response;
   } catch (error) {
     console.error('Auth Error:', error.message);
-    // Clear tokens and redirect on auth errors
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     window.location.href = '/login';
