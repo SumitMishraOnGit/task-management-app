@@ -9,39 +9,38 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  console.log("Connecting to API at:", import.meta.env.VITE_API_BASE_URL);
+  // For debugging, let's log the variable right when the component loads
+  console.log("VITE_API_BASE_URL is:", import.meta.env.VITE_API_BASE_URL);
 
-  // Handles the form submission for logging in.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/users/login`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await res.json();
-      
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        // This will help us see the actual error from the server if it's not a 404!
+        const errorText = await res.text();
+        throw new Error(data.message || `Login failed: ${errorText}`);
       }
+      
+      const data = await res.json();
 
       if (!data.accessToken || !data.refreshToken) {
         throw new Error("Invalid response from server");
       }
 
-      // Save both tokens
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
-
       setError("");
-      
-      // Navigate to dashboard with correct path
       navigate("/home/dashboard");
+
     } catch (err) {
       console.error("Login error:", err);
       setError(err.message || "Failed to login. Please try again.");
@@ -53,9 +52,8 @@ const Login = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-neutral-900">
       <div className="relative z-10 h-full flex items-center justify-center p-4 sm:p-8">
-        <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden ring-1 ring-neutral-800">
-          {/* Left Side: Now opaque, with the blobby background contained within it. A right border is added to create the dividing line. */}
-          <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden border-r border-neutral-800">
+        <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden border border-neutral-800">
+          <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden">
             <div className="absolute inset-0 z-0 overflow-hidden">
                <BlobbyBackground />
             </div>
@@ -70,11 +68,9 @@ const Login = () => {
                 </p>
             </div>
           </div>
-
-          {/* Right Side: The login form  */}
-          <div className="w-full md:w-1/2 h-full bg-neutral-900/70 rounded-2xl border border-neutral-700 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
+          <div className="w-full md:w-1/2 h-full bg-neutral-900/70 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
             <div className="w-full max-w-md">
-              <h2 className="text-4xl font-bold text-white mb-8 text-center">Login</h2>
+              <h2 className="text-3xl font-bold text-white mb-8 text-center">Login</h2>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <input
