@@ -25,12 +25,12 @@ const Login = () => {
       });
 
       if (!res.ok) {
-        // This will help us see the actual error from the server if it's not a 404!
         const errorText = await res.text();
-        throw new Error(data.message || `Login failed: ${errorText}`);
+        throw new Error(`Login failed: ${errorText}`);
       }
-      
+
       const data = await res.json();
+
 
       if (!data.accessToken || !data.refreshToken) {
         throw new Error("Invalid response from server");
@@ -55,17 +55,17 @@ const Login = () => {
         <div className="relative w-full max-w-6xl h-full max-h-[48rem] flex rounded-2xl overflow-hidden border border-neutral-800">
           <div className="w-full md:w-1/2 h-full flex-col items-center justify-center p-8 hidden md:flex relative overflow-hidden">
             <div className="absolute inset-0 z-0 overflow-hidden">
-               <BlobbyBackground />
+              <BlobbyBackground />
             </div>
             <div className="relative z-10 text-center">
-                <h1
-                  className="text-white text-5xl lg:text-6xl text-center leading-tight font-bold"
-                >
-                  Rise Together,<br />Build More.
-                </h1>
-                <p className="text-neutral-300 mt-4 text-center max-w-sm">
-                  Join our community and start collaborating on amazing projects today.
-                </p>
+              <h1
+                className="text-white text-5xl lg:text-6xl text-center leading-tight font-bold"
+              >
+                Rise Together,<br />Build More.
+              </h1>
+              <p className="text-neutral-300 mt-4 text-center max-w-sm">
+                Join our community and start collaborating on amazing projects today.
+              </p>
             </div>
           </div>
           <div className="w-full md:w-1/2 h-full bg-neutral-900/70 backdrop-blur-sm flex items-center justify-center p-6 sm:p-8">
@@ -95,9 +95,8 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full p-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors duration-300 ease-in-out ${
-                    loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-100"
-                  }`}
+                  className={`w-full p-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition-colors duration-300 ease-in-out ${loading ? "opacity-50 cursor-not-allowed" : "hover:scale-105 active:scale-100"
+                    }`}
                 >
                   {loading ? "Logging in..." : "Login"}
                 </button>
