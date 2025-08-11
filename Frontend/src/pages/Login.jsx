@@ -34,9 +34,20 @@ const Login = () => {
         throw new Error("Invalid response from server");
       }
 
+      console.log('Login successful, saving tokens...');
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
+      
+      // Verify tokens were saved
+      const savedAccessToken = localStorage.getItem("accessToken");
+      const savedRefreshToken = localStorage.getItem("refreshToken");
+      
+      if (!savedAccessToken || !savedRefreshToken) {
+        throw new Error("Failed to save authentication tokens");
+      }
+
       setError("");
+      console.log('Tokens saved, navigating to dashboard...');
       navigate("/home/dashboard");
 
     } catch (err) {

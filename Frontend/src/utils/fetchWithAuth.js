@@ -8,6 +8,10 @@ export async function fetchWithAuth(url, options = {}) {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
+  // Ensure URL starts with /
+  const normalizedUrl = url.startsWith('/') ? url : `/${url}`;
+  const fullUrl = `${API_BASE_URL}${normalizedUrl}`;
+
   const accessToken = localStorage.getItem('accessToken');
   const refreshToken = localStorage.getItem('refreshToken');
 
@@ -21,7 +25,7 @@ export async function fetchWithAuth(url, options = {}) {
   };
 
   try {
-    let response = await fetch(`${API_BASE_URL}${url}`, options);
+    let response = await fetch(fullUrl, options);
 
     if (response.status === 401) {
       console.log('Access token expired, attempting refresh...');
