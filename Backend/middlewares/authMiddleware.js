@@ -1,12 +1,16 @@
 const jwt = require("jsonwebtoken");
 const verifyToken = (req, res, next) => {
+  console.log('Auth middleware called');
   const authHeader = req.headers.authorization;
+  console.log('Auth header:', authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    console.log('No valid auth header found');
     return res.status(401).json({ message: "Access Denied. No token provided." });
   }
 
   const token = authHeader.split(" ")[1];
+  console.log('Token extracted:', token ? 'Token present' : 'No token');
 
   try {
     // Verify the access token using the correct secret

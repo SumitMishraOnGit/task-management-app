@@ -34,6 +34,10 @@ app.get('/', (req, res) => {
   res.json({ status: 'Server is running!' });
 });
 
+// Mount route handlers
+app.use("/tasks", taskRoutes);
+app.use("/users", userRoutes);
+
 
 // Routes
 app.use("/tasks", taskRoutes);

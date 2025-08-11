@@ -6,6 +6,22 @@ const uploadTaskFile = require("../../middlewares/multerTasks");
 const { buildTaskQuery, getSortOption } = require("../../utils/taskQueryUtils");
 const mongoose = require('mongoose'); 
 
+// GET all tasks
+router.get("/", verifyToken, async (req, res, next) => {
+  try {
+    console.log('GET /tasks request received');
+    console.log('User ID from token:', req.user.userId || req.user._id);
+    
+    const tasks = await Task.find({ createdBy: req.user.userId || req.user._id });
+    console.log('Found tasks:', tasks.length);
+    
+    res.json(tasks);
+  } catch (error) {
+    console.error('Error in GET /tasks:', error);
+    next(error);
+  }
+});
+
 // GET /tasks/stats?range=weekly|monthly
 router.get("/stats", verifyToken, async (req, res, next) => {
   try {
