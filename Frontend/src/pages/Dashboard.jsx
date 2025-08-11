@@ -17,10 +17,13 @@ function isTrivialStatsError(error) {
 }
 
 export default function Dashboard() {
-  const { tasks } = useTaskContext(); // ✨ GET TASKS FROM CONTEXT
+  const { tasks, loading: tasksLoading, error: tasksError } = useTaskContext();
   const [range, setRange] = useState('weekly');
-  const { stats, loading, error } = useTaskStats(range);
+  const { stats, loading: statsLoading, error: statsError } = useTaskStats(range);
   const { data: chartData, loading: chartLoading, error: chartError } = useTaskAnalytics(range);
+
+  const isLoading = tasksLoading || statsLoading || chartLoading;
+  const error = tasksError || statsError || chartError;
 
   return (
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
@@ -47,7 +50,26 @@ export default function Dashboard() {
           </div>
 
           <div className="mt-auto space-y-4">
-            <div className="flex items-center justify-between">
+            {isLoading ? (
+              <div className="text-neutral-400">Loading stats...</div>
+            ) : error && !isTrivialStatsError(error) ? (
+              <div className="text-rose-400">{error}</div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400">Total Tasks</span>
+                  <span className="text-white font-semibold">{stats.total || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400">Completed</span>
+                  <span className="text-green-400 font-semibold">{stats.completed || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400">Pending</span>
+                  <span className="text-rose-400 font-semibold">{stats.pending || 0}</span>
+                </div>
+              </>
+            )}
               <span className="text-neutral-400 text-sm">Total Tasks</span>
               <span className="font-semibold text-neutral-100 text-sm">
                 {loading ? '...' : stats.total}
@@ -81,11 +103,10 @@ export default function Dashboard() {
               loading={chartLoading}
             />
           </div>
-        </div>
-      </div>
+        </div>      
       {/* Recent tasks section */}
-      {/* ✨ PASS THE REAL TASKS DOWN */}
-      <RecentTasksPreview tasks={tasks || []}/>
+    {/* ✨ PASS THE REAL TASKS DOWN */}
+                <RecentTasksPreview tasks={tasks} loading={isLoading} error={error} />
     </div>
   );
 }

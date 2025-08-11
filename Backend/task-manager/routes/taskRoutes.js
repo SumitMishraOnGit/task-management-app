@@ -28,20 +28,17 @@ router.get("/stats", verifyToken, async (req, res, next) => {
     const { range = 'weekly' } = req.query;
     const userId = req.user.userId || req.user._id;
 
-    // Calculate the start date based on the range
-    const startDate = new Date();
-    if (range === 'weekly') {
-      startDate.setDate(startDate.getDate() - 7);
-    } else if (range === 'monthly') {
-      startDate.setMonth(startDate.getMonth() - 1);
-    }
+    console.log('Fetching stats for user:', userId);
 
-    // Get task statistics
-    const [total, completed, pending] = await Promise.all([
-      Task.countDocuments({ createdBy: userId, createdAt: { $gte: startDate } }),
-      Task.countDocuments({ createdBy: userId, status: true, createdAt: { $gte: startDate } }),
-      Task.countDocuments({ createdBy: userId, status: false, createdAt: { $gte: startDate } })
-    ]);
+    // Get all tasks for the user regardless of date
+    const allTasks = await Task.find({ createdBy: userId });
+    
+    // Count tasks
+    const total = allTasks.length;
+    const completed = allTasks.filter(task => task.status).length;
+    const pending = allTasks.filter(task => !task.status).length;
+
+    console.log('Task stats:', { total, completed, pending });
 
     res.json({ total, completed, pending });
   } catch (error) {

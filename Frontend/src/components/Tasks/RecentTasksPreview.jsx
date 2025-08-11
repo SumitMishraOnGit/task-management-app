@@ -6,9 +6,27 @@ const priorityStyles = {
   default: "text-gray-400 bg-gray-400/10", 
 };
 
-export default function RecentTasksPreview({ tasks }) {
+export default function RecentTasksPreview({ tasks, loading, error }) {
+  if (loading) {
+    return (
+      <div className="dashboard-card w-full h-auto p-4 flex-grow">
+        <h3 className="text-lg font-semibold text-neutral-200 mb-2">Upcoming Tasks</h3>
+        <div className="text-neutral-400">Loading tasks...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-card w-full h-auto p-4 flex-grow">
+        <h3 className="text-lg font-semibold text-neutral-200 mb-2">Upcoming Tasks</h3>
+        <div className="text-rose-400">{error}</div>
+      </div>
+    );
+  }
+
   // Use only pending tasks for the preview
-  const pendingTasks = tasks.filter(task => !task.status);
+  const pendingTasks = tasks?.filter(task => !task.status) || [];
   
   // Sort by due date ascending (sooner tasks first)
   const sortedTasks = [...pendingTasks].sort((a, b) => {

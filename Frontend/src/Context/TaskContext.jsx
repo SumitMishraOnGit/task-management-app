@@ -13,11 +13,12 @@ const API_URL = '/tasks';
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
   const [sortedTasks, setSortedTasks] = useState([]);
-  const [loading, setLoading] = useState(true); // Only for initial load
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [highlightedTaskId, setHighlightedTaskId] = useState(null);
-  const [activityIndicators, setActivityIndicators] = useState({}); // For new/edited tasks
+  const [activityIndicators, setActivityIndicators] = useState({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const navigate = useNavigate();
   const isAuthenticated = () => !!localStorage.getItem('accessToken');
@@ -31,10 +32,22 @@ export const TaskProvider = ({ children }) => {
     setError(null);
     try {
       const res = await fetchWithAuth(API_URL);
-      const data = await res.json();
+      const text = await res.text();
+      const data = text ? JSON.parse(text) : [];
+      
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
-      setTasks(Array.isArray(data) ? data : (data.tasks || []));
+      
+      const processedTasks = Array.isArray(data) ? data : (data.tasks || []);
+      setTasks(processedTasks);
+      
+      // Sort tasks by due date for recent tasks preview
+      const sortedByDueDate = [...processedTasks].sort((a, b) => 
+        new Date(a.dueDate) - new Date(b.dueDate)
+      );
+      setSortedTasks(sortedByDueDate);
+      
     } catch (err) {
+      console.error('Error fetching tasks:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -42,9 +55,16 @@ export const TaskProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchTasks();
-    // eslint-disable-next-line
-  }, []);
+    const initializeApp = async () => {
+      if (!isInitialized) {
+        console.log('Initializing TaskContext...');
+        await fetchTasks();
+        setIsInitialized(true);
+      }
+    };
+
+    initializeApp();
+  }, [isInitialized]);
 
   useEffect(() => {
     const pendingTasks = tasks.filter(task => !task.status);
