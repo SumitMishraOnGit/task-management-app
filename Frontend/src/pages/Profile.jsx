@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 import ActivityHeatmap from '../components/profile/ActivityHeatmap';
+import { ProfileSkeleton } from '../components/ui/Skeleton';
 
 const PlaceholderAvatar = () => (
     <svg className="h-full w-full text-neutral-500" fill="currentColor" viewBox="0 0 24 24">

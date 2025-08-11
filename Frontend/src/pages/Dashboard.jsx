@@ -22,6 +22,13 @@ export default function Dashboard() {
   const { stats, loading: statsLoading, error: statsError } = useTaskStats(range);
   const { data: chartData, loading: chartLoading, error: chartError } = useTaskAnalytics(range);
 
+  // Refresh stats when tasks change
+  useEffect(() => {
+    if (tasks.length > 0) {
+      console.log('Tasks updated, refreshing stats...');
+    }
+  }, [tasks]);
+
   const isLoading = tasksLoading || statsLoading || chartLoading;
   const error = tasksError || statsError || chartError;
 

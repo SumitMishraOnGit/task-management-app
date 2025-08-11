@@ -13,15 +13,17 @@ export const useTaskStats = (range = 'weekly') => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching stats for range:', range);
       const res = await fetchWithAuth(`${API_URL}?range=${range}`);
-      // ✨ FIX: Check for response text before parsing JSON
       const text = await res.text();
       if (!text) {
+        console.log('No stats data received');
         setStats({ total: 0, completed: 0, pending: 0 });
         return;
       }
       const data = JSON.parse(text);
       if (!res.ok) throw new Error(data.message || 'Failed to fetch stats');
+      console.log('Received stats:', data);
       setStats(data);
     } catch (err) {
       setError(err.message);

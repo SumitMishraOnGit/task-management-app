@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
+import { HeatmapSkeleton } from '../ui/Skeleton';
 
 const ActivityHeatmap = () => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const { tasks } = useTaskContext(); // Get tasks from context to trigger refresh
 
   useEffect(() => {
     const fetchHeatmapData = async () => {
@@ -31,7 +33,7 @@ const ActivityHeatmap = () => {
       }
     };
     fetchHeatmapData();
-  }, []);
+  }, [tasks]); // Refresh when tasks change
 
   const getDaysInLastYear = () => {
     const days = [];

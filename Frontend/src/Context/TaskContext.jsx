@@ -38,6 +38,7 @@ export const TaskProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
       
       const processedTasks = Array.isArray(data) ? data : (data.tasks || []);
+      console.log('Fetched tasks:', processedTasks.length);
       setTasks(processedTasks);
       
       // Sort tasks by due date for recent tasks preview
@@ -64,6 +65,15 @@ export const TaskProvider = ({ children }) => {
     };
 
     initializeApp();
+
+    // Set up refresh interval
+    const refreshInterval = setInterval(() => {
+      if (isAuthenticated()) {
+        fetchTasks();
+      }
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(refreshInterval);
   }, [isInitialized]);
 
   useEffect(() => {
