@@ -10,7 +10,7 @@ const ActivityHeatmap = () => {
   useEffect(() => {
     const fetchHeatmapData = async () => {
       try {
-        const res = await fetchWithAuth('/api/users/profile/activity-heatmap');
+        const res = await fetchWithAuth('/users/profile/activity-heatmap');
 
         // ✨ FIX: Check for content before parsing JSON
         const responseText = await res.text();

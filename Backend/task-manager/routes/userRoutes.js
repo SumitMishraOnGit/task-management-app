@@ -26,6 +26,44 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
+// Get user profile
+router.get("/profile", verifyToken, async (req, res, next) => {
+  try {
+    const userId = req.user.userId || req.user._id;
+    const user = await User.findById(userId).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get user activity heatmap
+router.get("/profile/activity-heatmap", verifyToken, async (req, res, next) => {
+  try {
+    const userId = req.user.userId || req.user._id;
+    const tasks = await Task.find({ 
+      createdBy: userId,
+      createdAt: { 
+        $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) 
+      }
+    }).select('createdAt status');
+
+    const heatmap = tasks.reduce((acc, task) => {
+      const date = task.createdAt.toISOString().split('T')[0];
+      if (!acc[date]) acc[date] = 0;
+      acc[date]++;
+      return acc;
+    }, {});
+
+    res.json(heatmap);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // --- LOGIN ---
 router.post("/login", async (req, res, next) => {
   try {

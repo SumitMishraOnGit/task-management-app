@@ -22,7 +22,7 @@ export default function Profile() {
     const [passwordError, setPasswordError] = useState('');
     const [passwordSuccessMessage, setPasswordSuccessMessage] = useState('');
 
-    const API_URL = '/api/users/profile';
+    const API_URL = '/users/profile';
 
     useEffect(() => {
         const fetchProfile = async () => {
