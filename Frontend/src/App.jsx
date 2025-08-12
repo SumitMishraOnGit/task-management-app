@@ -22,7 +22,7 @@ function App() {
     return isAuthenticated() ? <Navigate to="/home/dashboard" replace /> : <Login />;
   };
 
-  return (
+   return (
     <BrowserRouter>
       <Routes>
         {/* Public routes */}

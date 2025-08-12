@@ -34,19 +34,13 @@ export const TaskProvider = ({ children }) => {
       const res = await fetchWithAuth(API_URL);
       const text = await res.text();
       const data = text ? JSON.parse(text) : [];
-      
+
       if (!res.ok) throw new Error(data.message || 'Failed to fetch tasks');
-      
+
       const processedTasks = Array.isArray(data) ? data : (data.tasks || []);
       console.log('Fetched tasks:', processedTasks.length);
       setTasks(processedTasks);
-      
-      // Sort tasks by due date for recent tasks preview
-      const sortedByDueDate = [...processedTasks].sort((a, b) => 
-        new Date(a.dueDate) - new Date(b.dueDate)
-      );
-      setSortedTasks(sortedByDueDate);
-      
+
     } catch (err) {
       console.error('Error fetching tasks:', err);
       setError(err.message);
@@ -79,6 +73,9 @@ export const TaskProvider = ({ children }) => {
   useEffect(() => {
     const pendingTasks = tasks.filter(task => !task.status);
     const completedTasks = tasks.filter(task => task.status);
+    // Sort pending tasks by due date (sooner first)
+    pendingTasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    // Sort completed tasks by creation date (newest first)
     completedTasks.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     setSortedTasks([...pendingTasks, ...completedTasks]);
   }, [tasks]);
@@ -96,23 +93,21 @@ export const TaskProvider = ({ children }) => {
 
   const addTask = async (newTaskData) => {
     try {
-      const taskData = { ...newTaskData, status: Boolean(newTaskData.status) };
-      // Get the real task from the server first
       const res = await fetchWithAuth(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData),
+        body: JSON.stringify(newTaskData),
       });
       const savedTask = await res.json();
       if (!res.ok) throw new Error(savedTask.message || 'Failed to add task');
-      
-      // Optimistically add the server-confirmed task to state
-      setTasks(prevTasks => [savedTask, ...prevTasks]);
+
+      // --- FIX: Refetch tasks to get the latest list ---
+      await fetchTasks();
       showActivityIndicator(savedTask._id, 'new');
 
     } catch (err) {
       setError(err.message);
-      throw err; // Re-throw to be caught in the modal
+      throw err;
     }
   };
 
@@ -125,10 +120,9 @@ export const TaskProvider = ({ children }) => {
         });
         const updatedTask = await res.json();
         if (!res.ok) throw new Error(updatedTask.message || 'Failed to update task');
-        
-        // Optimistically update the task in the local state
-        setTasks(prevTasks => prevTasks.map(t => t._id === id ? updatedTask : t));
-        // Only show "edited" badge if it wasn't a status toggle
+
+        // --- FIX: Refetch tasks to ensure UI is in sync ---
+        await fetchTasks();
         if (updatedTaskData.status === undefined) {
           showActivityIndicator(id, 'edited');
         }
@@ -140,22 +134,18 @@ export const TaskProvider = ({ children }) => {
   };
 
   const deleteTask = async (id) => {
-    const originalTasks = tasks;
-    // Optimistically remove the task from the UI immediately
-    setTasks(prevTasks => prevTasks.filter(t => t._id !== id));
-    
     try {
       const res = await fetchWithAuth(`${API_URL}/${id}`, { method: 'DELETE' });
       if (!res.ok) {
-        // If the server fails, put the task back
-        setTasks(originalTasks);
         const data = await res.json();
         throw new Error(data.message || 'Failed to delete task');
       }
+      // --- FIX: Refetch tasks after successful deletion ---
+      await fetchTasks();
     } catch (err) {
       setError(err.message);
-      // Revert state if the API call fails
-      setTasks(originalTasks);
+      // If the delete fails, we should refetch to restore the original state
+      await fetchTasks();
     }
   };
 

@@ -22,20 +22,23 @@ export default function Dashboard() {
   const { stats, loading: statsLoading, error: statsError } = useTaskStats(range);
   const { data: chartData, loading: chartLoading, error: chartError } = useTaskAnalytics(range);
 
+  const isLoading = tasksLoading || statsLoading || chartLoading;
+  const error = tasksError || statsError || chartError;
+
   // Handle loading and error states
-  if (tasksLoading || statsLoading || chartLoading) {
+  if (isLoading) {
     return (
       <div className="p-4">
         <div className="animate-pulse space-y-4">
-          <div className="h-48 bg-gray-200 rounded"></div>
-          <div className="h-32 bg-gray-200 rounded"></div>
+          <div className="h-48 dashboard-card rounded"></div>
+          <div className="h-32 dashboard-card rounded"></div>
         </div>
       </div>
     );
   }
 
-  if (tasksError && !isTrivialStatsError(tasksError)) {
-    return <div className="p-4 text-red-500">Error loading dashboard: {tasksError}</div>;
+  if (error && !isTrivialStatsError(error)) {
+    return <div className="p-4 text-red-500 text-center">Error loading dashboard: {error}</div>;
   }
 
   // Refresh stats when tasks change
@@ -44,9 +47,6 @@ export default function Dashboard() {
       console.log('Tasks updated, refreshing stats...');
     }
   }, [tasks]);
-
-  const isLoading = tasksLoading || statsLoading || chartLoading;
-  const error = tasksError || statsError || chartError;
 
   return (
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
@@ -93,26 +93,6 @@ export default function Dashboard() {
                 </div>
               </>
             )}
-              <span className="text-neutral-400 text-sm">Total Tasks</span>
-              <span className="font-semibold text-neutral-100 text-sm">
-                {loading ? '...' : stats.total}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-green-600 text-sm">Completed</span>
-              <span className="font-semibold text-green-400 text-sm">
-                {loading ? '...' : stats.completed}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-rose-600 text-sm">Pending</span>
-              <span className="font-semibold text-rose-400 text-sm">
-                {loading ? '...' : stats.pending}
-              </span>
-            </div>
-            {error && !isTrivialStatsError(error) && (
-              <div className="text-rose-400 text-xs mt-2">{error}</div>
-            )}
           </div>
         </div>
 
@@ -120,16 +100,16 @@ export default function Dashboard() {
         <div className="dashboard-card flex-grow w-5/7 p-4 h-full flex flex-col">
           <h3 className="text-lg font-semibold text-neutral-200 mb-4">Task Distribution</h3>
           <div className="flex-grow">
-            <TaskDistributionChart 
-              taskData={chartData} 
+            <TaskDistributionChart
+              taskData={chartData}
               error={chartError}
               loading={chartLoading}
             />
           </div>
-        </div>      
+        </div>
+      </div>
       {/* Recent tasks section */}
-    {/* ✨ PASS THE REAL TASKS DOWN */}
-                <RecentTasksPreview tasks={tasks} loading={isLoading} error={error} />
+      <RecentTasksPreview tasks={tasks} loading={isLoading} error={error} />
     </div>
   );
 }
