@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 import { HeatmapSkeleton } from '../ui/Skeleton';
+import { useTaskContext } from '../../Context/TaskContext'; // <-- This line was missing
 
 const ActivityHeatmap = () => {
   const [data, setData] = useState({});
@@ -13,19 +14,15 @@ const ActivityHeatmap = () => {
     const fetchHeatmapData = async () => {
       try {
         const res = await fetchWithAuth('/users/profile/activity-heatmap');
-
-        // ✨ FIX: Check for content before parsing JSON
         const responseText = await res.text();
-        const activityData = responseText ? JSON.parse(responseText) : [];
+        
+        // The backend seems to be returning an object, not an array.
+        // Let's adapt to that structure.
+        const activityData = responseText ? JSON.parse(responseText) : {};
 
         if (!res.ok) throw new Error('Failed to fetch activity data');
 
-        // Convert array to a map for quick lookups
-        const dataMap = activityData.reduce((acc, item) => {
-          acc[item.date] = item.count;
-          return acc;
-        }, {});
-        setData(dataMap);
+        setData(activityData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -54,7 +51,7 @@ const ActivityHeatmap = () => {
   };
 
   if (loading) {
-    return <div className="text-neutral-400">Loading activity...</div>;
+    return <HeatmapSkeleton />;
   }
 
   const days = getDaysInLastYear();
@@ -62,7 +59,7 @@ const ActivityHeatmap = () => {
   return (
     <div className="dashboard-card pb-8 p-4">
       <h3 className="text-lg font-semibold text-white mb-4">Activity</h3>
-      <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-hidden max-w-full">
+      <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-x-auto p-2">
         {days.map((day, index) => {
           const dateString = day.toISOString().split('T')[0];
           const count = data[dateString] || 0;
