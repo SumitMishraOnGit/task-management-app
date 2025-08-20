@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Tasks from "./pages/Tasks.jsx";
 import Profile from "./pages/profile.jsx";
 import Login from "./pages/Login.jsx";
-import Signup from "./Signup.jsx";
+import Signup from "./pages/Signup.jsx";
 import { TaskProvider } from "./Context/TaskContext.jsx"; 
 
 function App() {

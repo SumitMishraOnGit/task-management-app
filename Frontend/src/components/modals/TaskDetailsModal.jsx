@@ -45,11 +45,9 @@ const TaskDetailsModal = ({ task, isOpen, onClose, onSave, isEditMode }) => {
           </h3>
         </div>
 
-        {/* ✨ FIX: This new div will contain the scrollable content */}
         <div className="flex-grow overflow-y-auto modal-content-scroll pr-2">
           {isEditingTask ? (
             <form onSubmit={handleSaveEditedTask}>
-              {/* Form content remains the same... */}
               <div className="mb-4">
                 <label htmlFor="editTitle" className="block text-neutral-300 text-sm font-medium mb-1">Task Title</label>
                 <input
