@@ -65,7 +65,12 @@ function Tasks() {
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-3 overflow-hidden">
       <div className="task-div w-full h-full overflow-y-auto">
         {loading ? (
-          <p className="text-center text-neutral-400">Loading...</p>
+          <div className="grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] dashboard-card gap-4 m-2 items-center mb-4 pb-2 border-b border-neutral-600 text-neutral-400 font-semibold text-sm md:text-base">
+        <div className="text-center">S.No.</div>
+        <div>Task Title</div>
+        <div className="hidden md:block text-center">Due Date</div>
+        <div className="text-center">Status</div>
+      </div>
         ) : error ? (
           <p className="text-center text-rose-400">{error}</p>
         ) : (
@@ -76,7 +81,7 @@ function Tasks() {
             deleteTask={handleDeleteRequest}
             highlightedTaskId={highlightedTaskId}
             activityIndicators={activityIndicators}
-            loading={loading} // ✨ FIX: Pass the loading prop down
+            loading={loading} 
           />
         )}
       </div>

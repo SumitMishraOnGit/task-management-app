@@ -7,7 +7,7 @@ import { AnimatePresence } from 'framer-motion';
 const TaskList = ({ sortedTasks, toggleTaskStatus, openTaskDetails, deleteTask, highlightedTaskId, activityIndicators, loading }) => {
   return (
     <div className="flex flex-col h-full">
-      <div className="grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center mb-4 pb-2 border-b border-neutral-600 text-neutral-400 font-semibold text-sm md:text-base">
+      <div className="grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 m-2 items-center mb-4 pb-2 border-b border-neutral-600 text-neutral-400 font-semibold text-sm md:text-base">
         <div className="text-center">S.No.</div>
         <div>Task Title</div>
         <div className="hidden md:block text-center">Due Date</div>

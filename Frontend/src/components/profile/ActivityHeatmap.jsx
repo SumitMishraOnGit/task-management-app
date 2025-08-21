@@ -51,29 +51,36 @@ const ActivityHeatmap = () => {
     return 'bg-rose-500';
   };
 
-  if (loading) {
-    return <div className="text-neutral-400">Loading activity...</div>;
-  }
-
   const days = getDaysInLastYear();
 
   return (
-    <div className="dashboard-card pb-8 p-4">
+    <div className={`dashboard-card pb-8 p-4 relative`}>
       <h3 className="text-lg font-semibold text-white mb-4">Activity</h3>
-      <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-hidden max-w-full">
-        {days.map((day, index) => {
-          const dateString = day.toISOString().split('T')[0];
-          const count = data[dateString] || 0;
-          return (
-            <div key={index} className="relative group">
-              <div className={`w-3 h-3 rounded-sm ${getColorClass(count)}`}></div>
-              <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                {count} {count === 1 ? 'task' : 'tasks'} on {day.toLocaleDateString()}
+      {loading ? (
+        <div className="shimmer-wrapper">
+          <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-hidden max-w-full">
+            {/* Create placeholder divs with a subtle background color for the shimmer effect */}
+            {Array.from({ length: 365 }).map((_, index) => (
+              <div key={index} className="w-3 h-3 rounded-sm bg-neutral-800"></div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-rows-7 grid-flow-col gap-1 overflow-hidden max-w-full">
+          {days.map((day, index) => {
+            const dateString = day.toISOString().split('T')[0];
+            const count = data[dateString] || 0;
+            return (
+              <div key={index} className="relative group">
+                <div className={`w-3 h-3 rounded-sm ${getColorClass(count)}`}></div>
+                <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max px-2 py-1 bg-neutral-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {count} {count === 1 ? 'task' : 'tasks'} on {day.toLocaleDateString()}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
