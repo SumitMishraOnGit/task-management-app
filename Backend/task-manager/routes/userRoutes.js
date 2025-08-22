@@ -1,145 +1,186 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const router = express.Router();
-const User = require("../../models/User");
-const Task = require("../../models/Task");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const verifyToken = require("../../middlewares/authMiddleware");
-const errorHandler = require("../../middlewares/errorHandling");
-const uploadProfilePic = require("../../middlewares/multerProfile");
-const mongoose = require('mongoose');
+// Frontend/src/pages/Profile.jsx
 
-router.use(express.json());
-router.use(cookieParser());
-router.use(errorHandler);
+import React, { useState, useEffect } from 'react';
+import { fetchWithAuth } from '../utils/fetchWithAuth';
+import ActivityHeatmap from '../components/profile/ActivityHeatmap';
 
-// --- SIGNUP ---
-router.post("/signup", async (req, res, next) => {
-  try {
-    const { name, email, password } = req.body;
-    const user = new User({ name, email, password });
-    await user.save();
-    res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    next(error);
-  }
-});
+const PlaceholderAvatar = () => (
+    <svg className="h-full w-full text-neutral-500" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+);
 
-// --- LOGIN ---
-router.post("/login", async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: "Please enter email and password" });
+export default function Profile() {
+    const [userData, setUserData] = useState(null);
+    const [name, setName] = useState('');
+    const [avatarFile, setAvatarFile] = useState(null);
+    const [previewAvatar, setPreviewAvatar] = useState(null);
+    const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '' });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordSuccessMessage, setPasswordSuccessMessage] = useState('');
+
+    const API_URL = '/api/users/profile';
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                setLoading(true);
+                setError('');
+                const res = await fetchWithAuth(API_URL);
+
+                const responseText = await res.text();
+                if (!responseText) {
+                    throw new Error("Received an empty response from the server.");
+                }
+                const data = JSON.parse(responseText);
+
+                if (!res.ok) throw new Error(data.message || 'Failed to fetch profile');
+                setUserData(data);
+                setName(data.name);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setAvatarFile(file);
+            setPreviewAvatar(URL.createObjectURL(file));
+        }
+    };
+
+    const handleNameSave = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('name', name);
+        if (avatarFile) {
+            formData.append('avatar', avatarFile);
+        }
+
+        try {
+            setError('');
+            setSuccessMessage('');
+            const res = await fetchWithAuth(API_URL, {
+                method: 'PUT',
+                body: formData,
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to update profile');
+
+            setUserData(data.user);
+            setAvatarFile(null);
+            setPreviewAvatar(null);
+            setSuccessMessage("Profile updated successfully!");
+            setTimeout(() => setSuccessMessage(''), 3000);
+
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        try {
+            setPasswordError('');
+            setPasswordSuccessMessage('');
+            const res = await fetchWithAuth(`${API_URL}/change-password`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(passwordData),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to change password');
+
+            setPasswordData({ currentPassword: '', newPassword: '' });
+            setPasswordSuccessMessage('Password changed successfully!');
+            setTimeout(() => setPasswordSuccessMessage(''), 3000);
+
+        } catch (err) {
+            setPasswordError(err.message);
+        }
+    };
+
+
+    if (loading) {
+        return <div className="p-8 text-white">Loading profile...</div>;
     }
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found. Please sign up first." });
-    }
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect password" });
-    }
-    const accessToken = jwt.sign({ userId: user._id, roles: user.roles }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" });
-    const refreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" });
-    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 7 * 24 * 60 * 60 * 1000 });
-    res.status(200).json({ message: "Login successful", accessToken, refreshToken, user: { name: user.name, email: user.email, role: user.role } });
-  } catch (error) {
-    next(error);
-  }
-});
 
-// --- GET CURRENT USER'S PROFILE ---
-router.get("/profile", verifyToken, async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user.userId).select("-password");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (error) {
+        return <div className="p-8 text-rose-400">Error: {error}</div>;
     }
-    res.status(200).json({ name: user.name, email: user.email, avatar: user.file });
-  } catch (error) {
-    next(error);
-  }
-});
 
-// --- UPDATE CURRENT USER'S PROFILE (Name & Avatar) ---
-router.put("/profile", verifyToken, uploadProfilePic.single("avatar"), async (req, res, next) => {
-  try {
-    const { name } = req.body;
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    if (name) user.name = name;
-    if (req.file) user.file = req.file.path;
-    const updatedUser = await user.save();
-    res.status(200).json({ message: "Profile updated successfully", user: { name: updatedUser.name, email: updatedUser.email, avatar: updatedUser.file } });
-  } catch (error) {
-    next(error);
-  }
-});
+    return (
+        <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-auto">
+            <div className="p-2">
+                <div className="dashboard-card p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* Left Column: User Info */}
+                        <div className="md:col-span-1 flex flex-col justify-center items-center">
+                            <div className="relative w-32 h-32 mb-4">
+                                <div className="w-full h-full rounded-full overflow-hidden bg-neutral-700">
+                                    {previewAvatar ? (
+                                        <img src={previewAvatar} alt="Avatar Preview" className="w-full h-full object-cover" />
+                                    ) : userData?.avatar ? (
+                                        // ✨ FIX: Check for leading slash before adding it
+                                        <img src={userData.avatar.startsWith('/') ? userData.avatar : `/${userData.avatar}`} alt="User Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <PlaceholderAvatar />
+                                    )}
+                                </div>
+                                <label htmlFor="avatar-upload" className="absolute -bottom-2 -right-2 bg-rose-600 p-2 rounded-full cursor-pointer hover:bg-rose-700">
+                                    <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                    <input id="avatar-upload" type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+                                </label>
+                            </div>
+                            <h2 className="text-2xl font-bold text-white">{name}</h2>
+                            <p className="text-neutral-400 mt-1">{userData?.email}</p>
+                        </div>
+                        {/* Right Column: Forms */}
+                        <div className="md:col-span-2">
+                            <div className="flex flex-col md:flex-row md:space-x-6">
+                                {/* Personal Information Form */}
+                                <form onSubmit={handleNameSave} className="flex-1">
+                                    <h3 className="text-md font-semibold mb-2 text-white">Personal Information</h3>
+                                    {successMessage && <div className="mb-2 text-green-400 text-sm">{successMessage}</div>}
+                                    <label htmlFor="name" className="text-sm text-neutral-400">Name</label>
+                                    <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white focus:ring-rose-500 focus:border-rose-500" />
+                                    <button type="submit" className="mt-4 px-4 py-2 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition">Save Name/Avatar</button>
+                                </form>
 
-// --- CHANGE USER PASSWORD ---
-router.put("/profile/change-password", verifyToken, async (req, res, next) => {
-  try {
-    const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect current password" });
-    }
-    user.password = newPassword;
-    await user.save();
-    res.status(200).json({ message: "Password updated successfully" });
-  } catch (error) {
-    next(error);
-  }
-});
+                                {/* Change Password Form */}
+                                <form onSubmit={handlePasswordChange} className="flex-1 mt-6 md:mt-0">
+                                    <h3 className="text-md font-semibold mb-2 text-white">Change Password</h3>
+                                    {passwordSuccessMessage && <div className="mb-2 text-green-400 text-sm">{passwordSuccessMessage}</div>}
+                                    {passwordError && <div className="mb-2 text-red-400 text-sm">{passwordError}</div>}
+                                    <label htmlFor="currentPassword" className="text-sm text-neutral-400">Current Password</label>
+                                    <input id="currentPassword" type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
+                                    <label htmlFor="newPassword" className="text-sm text-neutral-400 mt-2 block">New Password</label>
+                                    <input id="newPassword" type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
+                                    <button type="submit" className="mt-4 px-4 py-2 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition">Change Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
-// --- GET USER ACTIVITY HEATMAP DATA ---
-router.get("/profile/activity-heatmap", verifyToken, async (req, res, next) => {
-  try {
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    const completedTasks = await Task.aggregate([
-      { $match: { createdBy: new mongoose.Types.ObjectId(req.user.userId), status: true, updatedAt: { $gte: oneYearAgo } } },
-      { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" } }, count: { $sum: 1 } } },
-      { $project: { _id: 0, date: "$_id", count: "$count" } }
-    ]);
-    res.status(200).json(completedTasks);
-  } catch (error) {
-    next(error);
-  }
-});
+                    {/* Subtle partition line added here  */}
+                    <div className="w-full h-px bg-neutral-700 my-8"></div>
 
-// --- REFRESH TOKEN ---
-router.post("/refresh-token", async (req, res, next) => {
-  try {
-    const { refreshToken } = req.body;
-    if (!refreshToken) {
-      return res.status(401).json({ message: "Refresh token not provided" });
-    }
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(403).json({ message: "Invalid or expired refresh token" });
-      }
-      const accessToken = jwt.sign({ userId: decoded.userId, roles: decoded.roles }, process.env.JWT_ACCESS_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "15m" });
-      const newRefreshToken = jwt.sign({ userId: decoded.userId }, process.env.JWT_REFRESH_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d" });
-      res.status(200).json({ accessToken, refreshToken: newRefreshToken });
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// --- LOGOUT ---
-router.post("/logout", (req, res) => {
-  res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict" });
-  res.status(200).json({ message: "Logged out successfully" });
-});
-
-module.exports = router;
+                    {/* Activity Heatmap */}
+                    <div className="mt-8">
+                        <ActivityHeatmap />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

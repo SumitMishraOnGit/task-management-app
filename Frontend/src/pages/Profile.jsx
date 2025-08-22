@@ -111,16 +111,30 @@ export default function Profile() {
     };
 
 
-    if (loading) {
-        return <div className="p-8 text-white">Loading profile...</div>;
-    }
+     if (loading) {
+    return (
+      <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-auto">
+        <div className="p-2">
+          <div className="dashboard-card p-6 w-full h-full shimmer-loading">
+            <div className="shimmer-placeholder h-32 w-32 rounded-full mx-auto mb-4 bg-neutral-800"></div>
+            <div className="shimmer-placeholder h-8 w-2/3 mx-auto mb-2 rounded-full bg-neutral-800"></div>
+            <div className="shimmer-placeholder h-4 w-1/2 mx-auto mb-8 rounded-md bg-neutral-800"></div>
+            <div className="shimmer-placeholder h-8 w-full mb-4 rounded-md bg-neutral-800"></div>
+            <div className="shimmer-placeholder h-8 w-full mb-4 rounded-md bg-neutral-800"></div>
+            <div className="shimmer-placeholder h-48 w-full rounded-md bg-neutral-800"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 
     if (error) {
         return <div className="p-8 text-rose-400">Error: {error}</div>;
     }
 
     return (
-        <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-auto">
+        <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-2 gap-4 overflow-auto">
             <div className="p-2">
                 <div className="dashboard-card p-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
