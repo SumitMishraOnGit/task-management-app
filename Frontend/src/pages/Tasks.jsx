@@ -9,11 +9,11 @@ import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModa
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 
 function Tasks() {
-  const { 
-    sortedTasks, loading, error, addTask, updateTask, deleteTask, 
-    searchTerm, highlightedTaskId, setHighlightedTaskId, activityIndicators 
+  const {
+    sortedTasks, loading, error, addTask, updateTask, deleteTask,
+    searchTerm, highlightedTaskId, setHighlightedTaskId, activityIndicators
   } = useTaskContext();
-  
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -49,7 +49,7 @@ function Tasks() {
     setSelectedTask(task);
     setIsEditMode(editMode);
   };
-  
+
   const handleDeleteRequest = (task) => {
     setTaskToDelete(task);
   };
@@ -65,7 +65,18 @@ function Tasks() {
     <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-3 overflow-hidden">
       <div className="task-div w-full h-full overflow-y-auto">
         {loading ? (
-          <p className="text-center text-neutral-400">Loading...</p>
+          <div className="space-y-3 animate-pulse">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-neutral-900/80 border border-neutral-800 rounded-xl p-4 flex items-center gap-4">
+                <div className="h-5 w-5 bg-neutral-800 rounded"></div>
+                <div className="flex-grow">
+                  <div className="h-5 w-48 bg-neutral-800 rounded mb-2"></div>
+                  <div className="h-3 w-32 bg-neutral-800/60 rounded"></div>
+                </div>
+                <div className="h-6 w-20 bg-neutral-800/70 rounded-full"></div>
+              </div>
+            ))}
+          </div>
         ) : error ? (
           <p className="text-center text-rose-400">{error}</p>
         ) : (
@@ -80,13 +91,13 @@ function Tasks() {
           />
         )}
       </div>
-      
+
       <FloatingActionButton onClick={() => setShowAddModal(true)} />
-      
+
       {showAddModal && <AddTaskModal onClose={() => setShowAddModal(false)} onAddTask={addTask} />}
-      
+
       {selectedTask && <TaskDetailsModal task={selectedTask} isOpen={!!selectedTask} onClose={() => setSelectedTask(null)} onSave={updateTask} isEditMode={isEditMode} />}
-      
+
       {taskToDelete && (
         <DeleteConfirmationModal
           isOpen={!!taskToDelete}

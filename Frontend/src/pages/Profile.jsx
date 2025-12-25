@@ -113,7 +113,45 @@ export default function Profile() {
 
 
     if (loading) {
-        return <div className="p-8 text-white">Loading profile...</div>;
+        return (
+            <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-auto">
+                <div className="p-2">
+                    <div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-6 animate-pulse">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {/* Left Column: Avatar skeleton */}
+                            <div className="md:col-span-1 flex flex-col justify-center items-center">
+                                <div className="w-32 h-32 rounded-full bg-neutral-800 mb-4"></div>
+                                <div className="h-6 w-32 bg-neutral-800 rounded mb-2"></div>
+                                <div className="h-4 w-40 bg-neutral-800/60 rounded"></div>
+                            </div>
+                            {/* Right Column: Forms skeleton */}
+                            <div className="md:col-span-2">
+                                <div className="flex flex-col md:flex-row md:space-x-6">
+                                    <div className="flex-1">
+                                        <div className="h-5 w-36 bg-neutral-800 rounded mb-4"></div>
+                                        <div className="h-4 w-12 bg-neutral-800/60 rounded mb-2"></div>
+                                        <div className="h-10 w-full bg-neutral-800/50 rounded-md mb-4"></div>
+                                        <div className="h-10 w-32 bg-neutral-800 rounded-lg"></div>
+                                    </div>
+                                    <div className="flex-1 mt-6 md:mt-0">
+                                        <div className="h-5 w-36 bg-neutral-800 rounded mb-4"></div>
+                                        <div className="h-4 w-28 bg-neutral-800/60 rounded mb-2"></div>
+                                        <div className="h-10 w-full bg-neutral-800/50 rounded-md mb-2"></div>
+                                        <div className="h-4 w-24 bg-neutral-800/60 rounded mb-2"></div>
+                                        <div className="h-10 w-full bg-neutral-800/50 rounded-md mb-4"></div>
+                                        <div className="h-10 w-36 bg-neutral-800 rounded-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full h-px bg-neutral-800 my-8"></div>
+                        {/* Heatmap skeleton */}
+                        <div className="h-6 w-32 bg-neutral-800 rounded mb-4"></div>
+                        <div className="h-32 w-full bg-neutral-800/40 rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
@@ -121,9 +159,9 @@ export default function Profile() {
     }
 
     return (
-        <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-auto">
-            <div className="p-2">
-                <div className="dashboard-card p-6">
+        <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col p-4 gap-4 overflow-y-auto overflow-x-hidden">
+            <div className="p-2 overflow-hidden">
+                <div className="dashboard-card p-6 overflow-hidden">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Left Column: User Info */}
                         <div className="md:col-span-1 flex flex-col justify-center items-center">
@@ -163,9 +201,9 @@ export default function Profile() {
                                     {passwordSuccessMessage && <div className="mb-2 text-green-400 text-sm">{passwordSuccessMessage}</div>}
                                     {passwordError && <div className="mb-2 text-red-400 text-sm">{passwordError}</div>}
                                     <label htmlFor="currentPassword" className="text-sm text-neutral-400">Current Password</label>
-                                    <input id="currentPassword" type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
+                                    <input id="currentPassword" type="password" value={passwordData.currentPassword} onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
                                     <label htmlFor="newPassword" className="text-sm text-neutral-400 mt-2 block">New Password</label>
-                                    <input id="newPassword" type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
+                                    <input id="newPassword" type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} className="w-full mt-1 p-2 my-2 rounded-md bg-neutral-700 border border-neutral-600 text-white" />
                                     <button type="submit" className="mt-4 px-4 py-2 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700 transition">Change Password</button>
                                 </form>
                             </div>

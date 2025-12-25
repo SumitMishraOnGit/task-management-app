@@ -28,18 +28,43 @@ export default function Dashboard() {
   const error = tasksError || statsError || chartError;
 
   useEffect(() => {
-    if (tasks.length > 0) {
+    if (tasks?.length > 0) {
       console.log('Tasks updated, refreshing stats...');
     }
   }, [tasks]);
 
   if (isLoading) {
     return (
-      <div className="p-4">
-        <div className="animate-pulse space-y-4">
-          <div className="h-48 bg-neutral-800 rounded"></div>
-          <div className="h-32 bg-neutral-800 rounded"></div>
-          <div className="h-64 bg-neutral-800 rounded"></div>
+      <div className="bg-neutral-900/50 h-[calc(100vh-4rem)] w-full flex flex-col px-4 py-4 gap-4 overflow-hidden">
+        <div className="flex w-full gap-4 h-2/3">
+          {/* Statistics skeleton */}
+          <div className="w-2/7 rounded-2xl p-4 flex flex-col bg-neutral-900/80 border border-neutral-800 animate-pulse">
+            <div className="h-6 w-24 bg-neutral-800 rounded mb-2"></div>
+            <div className="h-4 w-40 bg-neutral-800/70 rounded mb-6"></div>
+            <div className="flex flex-col gap-2 mb-4">
+              <div className="h-10 bg-neutral-800/60 rounded-lg"></div>
+              <div className="h-10 bg-neutral-800/60 rounded-lg"></div>
+            </div>
+            <div className="mt-auto space-y-4">
+              <div className="flex justify-between"><div className="h-4 w-20 bg-neutral-800/70 rounded"></div><div className="h-4 w-8 bg-neutral-800 rounded"></div></div>
+              <div className="flex justify-between"><div className="h-4 w-20 bg-neutral-800/70 rounded"></div><div className="h-4 w-8 bg-neutral-800 rounded"></div></div>
+              <div className="flex justify-between"><div className="h-4 w-20 bg-neutral-800/70 rounded"></div><div className="h-4 w-8 bg-neutral-800 rounded"></div></div>
+            </div>
+          </div>
+          {/* Chart skeleton */}
+          <div className="flex-grow w-5/7 p-4 h-full flex flex-col bg-neutral-900/80 border border-neutral-800 rounded-2xl animate-pulse">
+            <div className="h-6 w-36 bg-neutral-800 rounded mb-4"></div>
+            <div className="flex-grow bg-neutral-800/40 rounded-xl"></div>
+          </div>
+        </div>
+        {/* Recent tasks skeleton */}
+        <div className="h-1/3 bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 animate-pulse">
+          <div className="h-5 w-32 bg-neutral-800 rounded mb-4"></div>
+          <div className="flex gap-3">
+            <div className="h-20 flex-1 bg-neutral-800/50 rounded-xl"></div>
+            <div className="h-20 flex-1 bg-neutral-800/50 rounded-xl"></div>
+            <div className="h-20 flex-1 bg-neutral-800/50 rounded-xl"></div>
+          </div>
         </div>
       </div>
     );
