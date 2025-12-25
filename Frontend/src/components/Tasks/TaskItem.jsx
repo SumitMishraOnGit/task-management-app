@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import DeleteConfirmationModal from '../modals/DeleteConfirmationModal';
 import { motion } from 'framer-motion';
+import TagChip from '../ui/TagChip';
 
 const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask, isHighlighted, activityType }) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -29,8 +30,8 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask, isHighl
         exit={{ opacity: 0, x: -50, transition: { duration: 0.3 } }}
         id={`task-${task._id}`}
         className={`group grid grid-cols-[auto,1fr,100px,80px] md:grid-cols-[auto,1fr,150px,100px] gap-4 items-center p-4 rounded-lg shadow-md relative min-h-[75px] border transition-colors duration-500
-          ${task.status 
-            ? 'bg-rose-700/30 border-rose-600 opacity-70' 
+          ${task.status
+            ? 'bg-rose-700/30 border-rose-600 opacity-70'
             : `bg-neutral-800 hover:bg-neutral-700 ${isHighlighted || activityType === 'new' ? 'border-rose-500' : 'border-neutral-700/50'}`
           }`}
       >
@@ -46,6 +47,17 @@ const TaskItem = ({ task, toggleTaskStatus, openTaskDetails, deleteTask, isHighl
         <div className="text-center text-neutral-300 font-medium text-sm">{task.displayIndex}.</div>
         <div className="flex flex-col justify-center">
           <h3 className={`font-semibold text-base ${task.status ? 'line-through text-neutral-400' : 'text-neutral-50'}`}>{task.title}</h3>
+          {/* Tags display */}
+          {task.tags && task.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {task.tags.slice(0, 3).map((tag, index) => (
+                <TagChip key={index} tag={tag} size="sm" />
+              ))}
+              {task.tags.length > 3 && (
+                <span className="text-xs text-neutral-500">+{task.tags.length - 3} more</span>
+              )}
+            </div>
+          )}
           {task.description && (
             <p className={`text-xs mt-1 ${task.status ? 'line-through text-neutral-500' : 'text-neutral-400'}`}>
               {truncateDescription(task.description, 15)}

@@ -6,7 +6,11 @@ const taskSchema = new mongoose.Schema({
   dueDate: { type: Date },
   status: { type: Boolean, required: true, default: false },
   file: { type: String, default: null },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  tags: [{
+    name: { type: String, trim: true },
+    color: { type: String, default: '#f43f5e' }
+  }]
 }, { timestamps: true });
 
 const Task = mongoose.model("Task", taskSchema);
