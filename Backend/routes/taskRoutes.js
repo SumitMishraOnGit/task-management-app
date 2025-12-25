@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const Task = require("../../models/Task");
-const verifyToken = require("../../middlewares/authMiddleware");
-const uploadTaskFile = require("../../middlewares/multerTasks");
-const { buildTaskQuery, getSortOption } = require("../../utils/taskQueryUtils");
-const mongoose = require('mongoose'); 
+const Task = require("../models/Task");
+const verifyToken = require("../middlewares/authMiddleware");
+const uploadTaskFile = require("../middlewares/multerTasks");
+const { buildTaskQuery, getSortOption } = require("../utils/taskQueryUtils");
+const mongoose = require('mongoose');
 
 // GET all tasks
 router.get("/", verifyToken, async (req, res, next) => {
   try {
     console.log('GET /tasks request received');
     console.log('User ID from token:', req.user.userId || req.user._id);
-    
+
     const tasks = await Task.find({ createdBy: req.user.userId || req.user._id });
     console.log('Found tasks:', tasks.length);
-    
+
     res.json(tasks);
   } catch (error) {
     console.error('Error in GET /tasks:', error);
@@ -32,7 +32,7 @@ router.get("/stats", verifyToken, async (req, res, next) => {
 
     // Get all tasks for the user regardless of date
     const allTasks = await Task.find({ createdBy: userId });
-    
+
     // Count tasks
     const total = allTasks.length;
     const completed = allTasks.filter(task => task.status).length;
@@ -138,24 +138,24 @@ router.put("/:id", verifyToken, async (req, res, next) => {
 
 // Delete a task by ID
 router.delete("/:id", verifyToken, async (req, res, next) => {
-    try {
-      const task = await Task.findById(req.params.id);
+  try {
+    const task = await Task.findById(req.params.id);
 
-      if (!task) {
-        return res.status(404).json({ message: "Task not found!" });
-      }
-
-      if (req.user.role !== "admin" && task.createdBy.toString() !== (req.user.userId || req.user._id).toString()) {
-        return res.status(403).json({ message: "You can only delete your own tasks." });
-      }
-
-      await Task.findByIdAndDelete(req.params.id);
-      
-      res.status(200).json({ message: "Task deleted!" });
-    } catch (error) {
-      next(error);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found!" });
     }
+
+    if (req.user.role !== "admin" && task.createdBy.toString() !== (req.user.userId || req.user._id).toString()) {
+      return res.status(403).json({ message: "You can only delete your own tasks." });
+    }
+
+    await Task.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "Task deleted!" });
+  } catch (error) {
+    next(error);
   }
+}
 );
 
 
@@ -167,7 +167,7 @@ router.get("/paginated", verifyToken, async (req, res, next) => {
     const userId = req.user.userId || req.user._id;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: "Invalid user ID format." });
+      return res.status(400).json({ message: "Invalid user ID format." });
     }
 
     queryObj.createdBy = userId;
@@ -223,10 +223,10 @@ router.get("/analytics", verifyToken, async (req, res, next) => {
   try {
     const { range } = req.query;
     const userId = req.user.userId || req.user._id;
-    
+
     // ✨ FIX 1 (Consistency): Validate the User ID here as well
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(400).json({ message: "Invalid ID format in token." });
+      return res.status(400).json({ message: "Invalid ID format in token." });
     }
 
     const now = new Date();

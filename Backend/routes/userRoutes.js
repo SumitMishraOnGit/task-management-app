@@ -1,13 +1,13 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const router = express.Router();
-const User = require("../../models/User");
-const Task = require("../../models/Task");
+const User = require("../models/User");
+const Task = require("../models/Task");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const verifyToken = require("../../middlewares/authMiddleware");
-const errorHandler = require("../../middlewares/errorHandling");
-const uploadProfilePic = require("../../middlewares/multerProfile");
+const verifyToken = require("../middlewares/authMiddleware");
+const errorHandler = require("../middlewares/errorHandling");
+const uploadProfilePic = require("../middlewares/multerProfile");
 const mongoose = require('mongoose');
 
 router.use(express.json());
@@ -44,10 +44,10 @@ router.get("/profile", verifyToken, async (req, res, next) => {
 router.get("/profile/activity-heatmap", verifyToken, async (req, res, next) => {
   try {
     const userId = req.user.userId || req.user._id;
-    const tasks = await Task.find({ 
+    const tasks = await Task.find({
       createdBy: userId,
-      createdAt: { 
-        $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) 
+      createdAt: {
+        $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
       }
     }).select('createdAt status');
 

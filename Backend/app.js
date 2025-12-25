@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
 const cors = require('cors');
-const taskRoutes = require("./task-manager/routes/taskRoutes");
-const userRoutes = require("./task-manager/routes/userRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middlewares/errorHandling");
 
 const app = express();
